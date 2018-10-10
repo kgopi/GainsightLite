@@ -7,23 +7,30 @@ import ScrollableTabView from 'react-native-scrollable-tab-view'
 export default class ContentContainer extends Component<Props> {
 
     render() {
-      return (
-        <View style={styles.container}>
-            <ScrollableTabView
-                    tabBarUnderlineColor="#fff"
-                    tabBarUnderlineStyle={{backgroundColor: "#fff"}}
-                    tabBarBackgroundColor ="#558dfd"
-                    tabBarActiveTextColor="#fff"
-                    tabBarInactiveTextColor="#88b0ac"
-                    onChangeTab={(index) => {debugger; return this.props.onChangeTab(index)}}
-
-            >
-                <Timeline tabLabel="Timeline" />
-                <CTAList tabLabel="CTA" />
-                <Timeline tabLabel="CS360" />
-            </ScrollableTabView>
-        </View>
-      );
+        if(this.props.state.isDetailView){
+            return (
+                <View style={styles.container}>
+                    <Timeline onDetailView={this.props.onDetailView} tabLabel="Timeline" />
+                </View>
+              );
+        }else{
+            return (
+                <View style={styles.container}>
+                    <ScrollableTabView
+                            tabBarUnderlineColor="#fff"
+                            tabBarUnderlineStyle={{backgroundColor: "#fff"}}
+                            tabBarBackgroundColor ="#558dfd"
+                            tabBarActiveTextColor="#fff"
+                            tabBarInactiveTextColor="#88b0ac"
+                            onChangeTab={(index) => {return this.props.onChangeTab(index)}}
+                    >
+                        <Timeline onDetailView={this.props.onDetailView} tabLabel="Timeline" />
+                        <CTAList onDetailView={this.props.onDetailView} tabLabel="CTA" />
+                        <Timeline onDetailView={this.props.onDetailView} tabLabel="CS360" />
+                    </ScrollableTabView>
+                </View>
+              );
+        }
     }
 
 }

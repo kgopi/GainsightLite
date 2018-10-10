@@ -16,13 +16,18 @@ export class ActivityView extends React.Component{
                     avatar={
                         getLetterAvatar(this.props.item.name.first)
                     }
-                    onPress={() => this.onPress(this.props.item)}
+                    onPress={() => this.onPress(this.props.item.name.first)}
                 />
         );
     }
 
-    onPress = (name) => {
-        console.log(name);
+    onPress(name) {
+        this.props.onDetailView({
+            note: {
+                content: "Content of the activity",
+                subject: "Subject of the activity"
+            }
+        });
     }
 
 }

@@ -3,6 +3,7 @@ import {FlatList, StyleSheet} from 'react-native';
 import {List} from 'react-native-elements';
 import {ActivityView} from "./ActivityView";
 import { fetchActivities } from '../../services/Timeline';
+import { ActivityDetailView } from './ActivityDetailView';
 
 export class Timeline extends React.Component {
 
@@ -10,10 +11,14 @@ export class Timeline extends React.Component {
         seed: 1,
         page: 1,
         activities: [],
-        selectedActivity: null,
+        selectedActivity: this.props.selectedActivity,
         isLoading: false,
         isRefreshing: false,
     };
+
+    constructor(props){
+        super(props);
+    }
 
     handleRefresh = () => {
         this.setState({
@@ -47,14 +52,25 @@ export class Timeline extends React.Component {
         })
     }
 
+    onDetailView = (activity) => {
+        this.setState({
+            selectedActivity: activity
+        });
+        this.props.onDetailView({
+            selectedItem: activity,
+            title: 'Timeline'
+        });
+    }
+
     render() {
         const { activities, isRefreshing, selectedActivity } = this.state;
+        debugger;
         if(selectedActivity == null){
             return (
                 <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
-                            renderItem={({item})=>{return (<ActivityView item={item}></ActivityView>)}}
+                            renderItem={({item})=>{return (<ActivityView onDetailView={this.onDetailView} item={item}></ActivityView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
                             onRefresh={this.handleRefresh}
@@ -65,7 +81,7 @@ export class Timeline extends React.Component {
             );
         }else{
             return (
-                <view></view>
+                <ActivityDetailView activity={this.state.selectedActivity}></ActivityDetailView>
             );
         }
     }

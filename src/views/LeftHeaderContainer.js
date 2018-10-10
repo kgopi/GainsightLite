@@ -6,7 +6,13 @@ export default class LeftHeaderContainer extends Component<Props> {
     render() {
       return (
         <View style={styles.leftContainer}>
-            <Text style={styles.logoText}>Gainsight Lite</Text>
+            {
+              this.props.state.isDetailView && 
+                (<View>
+                  <Icon name="arrow-back" color='#fff' size={23} />
+                </View>)
+            }
+            <Text style={styles.logoText}>{this.props.state.title}</Text>
         </View>
       );
     }

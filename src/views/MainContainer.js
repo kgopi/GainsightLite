@@ -5,26 +5,28 @@ import {StyleSheet, View} from 'react-native';
 
 export default class MainContainer extends Component<Props> {
 
+    state = {
+        title: "Gainsight Lite",
+        isDetailView: false,
+        selectedActivity: null
+    }
+
     constructor(props) {
-        super(props);
-        this.state = {
-            title: "Timeline",
-            selected: 0
-        }  
+        super(props);  
     }
 
     render() {
       return (
         <View style={styles.mainContainer}>
-            <HeaderContainer title={this.state.title}></HeaderContainer>
-            <ContentContainer onChangeTab={this.onChangeTab}></ContentContainer>
+            <HeaderContainer state={this.state}></HeaderContainer>
+            <ContentContainer state={this.state} onDetailView={this.onDetailView}></ContentContainer>
         </View>
       );
     }
 
-    onChangeTab = (index) => {
+    onDetailView = ({title, selectedItem}) => {
         debugger;
-        this.setState({selected: index.i, title: index});
+        this.setState({title, isDetailView:true, selectedActivity: selectedItem});
     }
 }
 
