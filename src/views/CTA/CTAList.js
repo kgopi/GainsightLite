@@ -55,7 +55,7 @@ export class CTAList extends React.Component {
         const { activities, isRefreshing, selectedActivity } = this.state;
         if(selectedActivity == null){
             return (
-                <List style={style.scene}>
+                <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
                             renderItem={({item})=>{return (<Text>{"Me"}</Text>)}}
@@ -76,10 +76,6 @@ export class CTAList extends React.Component {
 }
 
 const style = StyleSheet.create({
-    scene: {
-        flex: 1,
-        paddingTop: -25
-    },
     activity: {
         width: '100%',
         backgroundColor: '#333',

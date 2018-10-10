@@ -56,7 +56,7 @@ export class Timeline extends React.Component {
         const { activities, isRefreshing, selectedActivity } = this.state;
         if(selectedActivity == null){
             return (
-                <List>
+                <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
                             renderItem={({item})=>{return (<ActivityView item={item}></ActivityView>)}}
