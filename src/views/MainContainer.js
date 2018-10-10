@@ -32,8 +32,9 @@ export default class MainContainer extends Component<Props> {
 
 const styles = StyleSheet.create({
     mainContainer: {
-      flex: 1,
-      backgroundColor: 'white',
-      height: 24
+      display:'flex',
+      flexDirection:'column',
+      backgroundColor: '#fff',
+      height:'100%'
     }
   });
