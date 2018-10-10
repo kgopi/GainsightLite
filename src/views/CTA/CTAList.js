@@ -58,7 +58,7 @@ export class CTAList extends React.Component {
                 <List style={style.scene}>
                         <FlatList
                             data={activities}
-                            renderItem={({item})=>{debugger; return (<Text>{"Me"}</Text>)}}
+                            renderItem={({item})=>{return (<Text>{"Me"}</Text>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
                             onRefresh={this.handleRefresh}

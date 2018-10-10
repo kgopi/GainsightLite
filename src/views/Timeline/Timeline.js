@@ -59,7 +59,7 @@ export class Timeline extends React.Component {
                 <List>
                         <FlatList
                             data={activities}
-                            renderItem={({item})=>{debugger; return (<ActivityView item={item}></ActivityView>)}}
+                            renderItem={({item})=>{return (<ActivityView item={item}></ActivityView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
                             onRefresh={this.handleRefresh}
