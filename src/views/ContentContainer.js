@@ -5,6 +5,7 @@ import {StyleSheet, View} from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 
 export default class ContentContainer extends Component<Props> {
+
     render() {
       return (
         <View style={styles.container}>
@@ -14,14 +15,17 @@ export default class ContentContainer extends Component<Props> {
                     tabBarBackgroundColor ="#558dfd"
                     tabBarActiveTextColor="#fff"
                     tabBarInactiveTextColor="#88b0ac"
+                    onChangeTab={(index) => {debugger; return this.props.onChangeTab(index)}}
+
             >
-                <Timeline tabLabel="Timeline" {...this.props} />
-                <CTAList tabLabel="CTA" {...this.props} />
-                <Timeline tabLabel="CS360" {...this.props} />
+                <Timeline tabLabel="Timeline" />
+                <CTAList tabLabel="CTA" />
+                <Timeline tabLabel="CS360" />
             </ScrollableTabView>
         </View>
       );
     }
+
 }
 
 const styles = StyleSheet.create({

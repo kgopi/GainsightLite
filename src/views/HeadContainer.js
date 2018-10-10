@@ -7,7 +7,7 @@ export default class HeaderContainer extends Component<Props> {
     render() {
       return (
         <View style={styles.headerContainer}>
-            <LeftHeaderContainer></LeftHeaderContainer>
+            <LeftHeaderContainer title={this.props.title}></LeftHeaderContainer>
             <RightHeaderContainer></RightHeaderContainer>
         </View>
       );

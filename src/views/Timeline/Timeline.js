@@ -2,6 +2,7 @@ import React from 'react';
 import {FlatList, StyleSheet} from 'react-native';
 import {List} from 'react-native-elements';
 import {ActivityView} from "./ActivityView";
+import { fetchActivities } from '../../services/Timeline';
 
 export class Timeline extends React.Component {
 
@@ -38,18 +39,12 @@ export class Timeline extends React.Component {
     loadActivities = () => {
         const { activities, seed, page } = this.state;
         this.setState({ isLoading: true });
-
-        fetch(`https://randomuser.me/api/?seed=${seed}&page=${page}&results=20`)
-            .then(res => res.json())
-            .then(res => {
-                this.setState({
-                    activities: page === 1 ? res.results : [...activities, ...res.results],
-                    isRefreshing: false,
-                });
-            })
-            .catch(err => {
-                console.error(err);
+        fetchActivities({seed, page}).then(res => {
+            this.setState({
+                activities: page === 1 ? res.results : [...activities, ...res.results],
+                isRefreshing: false,
             });
+        })
     }
 
     render() {

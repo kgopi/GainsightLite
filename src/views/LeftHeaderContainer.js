@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 export default class LeftHeaderContainer extends Component<Props> {
     render() {
       return (
-        <View style={styles.container}>
+        <View style={styles.leftContainer}>
             <Text style={styles.logoText}>Gainsight Lite</Text>
         </View>
       );
@@ -13,10 +13,10 @@ export default class LeftHeaderContainer extends Component<Props> {
 }
 
 const styles = StyleSheet.create({
-    container: {
+  leftContainer: {
         alignItems: "flex-start",
         flexDirection: "row"
-    },
+  },
     logoText: {
       color: "white",
       fontWeight: "bold",
