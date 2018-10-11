@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {connect} from 'react-redux';
-import {goToHome} from "./../actions/timeline";
+import {goToHome} from "../../actions/timeline";
 
 class LeftHeaderContainer extends Component<Props> {
     render() {
