@@ -1,6 +1,6 @@
 import { 
   ADD_ACTIVITY, ON_TAB_CHANGE, LOAD_ACTIVITIES, HANDLE_REFRESH, HANDLE_LOAD_MORE, SHOW_DETAIL_VIEW,
-  GO_HOME
+  GO_HOME, UPDATE_TIMELINE_DATA
 } from '../actions/types';
 import {initialState} from '../State';
 
@@ -29,6 +29,10 @@ export const GainsightLiteReducer = (state = initialState, action) => {
       return newState;
     case ON_TAB_CHANGE:
       newState = {...state, selectedTab: action.payload.selectedTab};
+      return newState;
+    case UPDATE_TIMELINE_DATA:
+      newState = {...state};
+      newState.timeline = {...newState.timeline, ...action.payload}
       return newState;
     default:
       return state;

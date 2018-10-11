@@ -1,4 +1,4 @@
-import { HANDLE_LOAD_MORE, HANDLE_REFRESH, LOAD_ACTIVITIES, SHOW_DETAIL_VIEW, GO_HOME } from './types';
+import { HANDLE_LOAD_MORE, HANDLE_REFRESH, LOAD_ACTIVITIES, SHOW_DETAIL_VIEW, GO_HOME, UPDATE_TIMELINE_DATA } from './types';
 
 export const handleRefresh = (seed) => {
   return {
@@ -32,6 +32,13 @@ export const loadActivities = (activities, isRefreshing) => {
         activities
       }
     }
+  }
+}
+
+export const updateTimelineState = (data) => {
+  return {
+    type: UPDATE_TIMELINE_DATA,
+    payload: data
   }
 }
 

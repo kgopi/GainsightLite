@@ -6,3 +6,4 @@ export const HANDLE_LOAD_MORE = 'HANDLE_LOAD_MORE';
 export const LOAD_ACTIVITIES = 'HANDLE_LOAD_MORE';
 export const SHOW_DETAIL_VIEW = 'SHOW_DETAIL_VIEW';
 export const GO_HOME = 'GO_HOME';
+export const UPDATE_TIMELINE_DATA = 'GO_HOME';

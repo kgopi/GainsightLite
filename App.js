@@ -60,7 +60,6 @@ export default class App extends Component {
     }
 
     render() {
-        debugger;
         let loggedIn = this.state.accessToken === null ? false : true;
         if(loggedIn){
             return (

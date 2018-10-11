@@ -4,7 +4,7 @@ import {List} from 'react-native-elements';
 import ActivityView from "./ActivityView";
 import { fetchActivities } from '../../services/Timeline';
 import { ActivityDetailView } from './ActivityDetailView';
-import {handleRefresh, handleLoadMore, loadActivities} from "./../../actions/timeline";
+import {handleRefresh, handleLoadMore, loadActivities, updateTimelineState} from "./../../actions/timeline";
 import {connect} from 'react-redux';
 
 class Timeline extends React.Component {
@@ -14,10 +14,17 @@ class Timeline extends React.Component {
     }
 
     loadActivities = () => {
-        const { activities, seed, page } = this.props;
-        fetchActivities({seed, page}).then(res => {
-            this.props.loadActivities(page === 1 ? res.results : [...activities, ...res.results], false);
-        })
+        const {activities, links, page} = this.props;
+
+        if(links.next == null && page.number > 0){
+            return; // No more activities
+        }
+
+        fetchActivities({links, page}).then(res => {
+            let data = res.data;
+            this.props.updateTimelineState({links: data.links, page: data.page});
+            this.props.loadActivities(page.number === 1 ? data.content : [...activities, ...data.content], false);
+        });
     }
 
     render() {
@@ -30,8 +37,8 @@ class Timeline extends React.Component {
                             renderItem={({item})=>{return (<ActivityView item={item}></ActivityView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
-                            onRefresh={()=>{this.props.handleRefresh(this.props.seed+1); this.loadActivities();}}
-                            onEndReached={()=>{this.props.handleLoadMore(this.props.page+1); this.loadActivities();}}
+                            onRefresh={()=>{this.props.handleRefresh(); this.loadActivities();}}
+                            onEndReached={()=>{this.loadActivities();}}
                             onEndThreshold={0}
                         />
                 </List>
@@ -60,7 +67,7 @@ const style = StyleSheet.create({
 
 const mapStateToProps = state => {
     return {
-        seed: state.app.timeline.seed,
+        links: state.app.timeline.links,
         page: state.app.timeline.page,
         activities: state.app.timeline.activities,
         selectedActivity: state.app.timeline.selectedActivity,
@@ -71,14 +78,14 @@ const mapStateToProps = state => {
   
   const mapDispatchersToProps = dispatch => {
     return {
-        handleRefresh: (seed) => {
-            dispatch(handleRefresh(seed));
-        },
-        handleLoadMore: (page) => {
-            dispatch(handleLoadMore(page));
+        handleRefresh: () => {
+            dispatch(updateTimelineState({links: {next: null}, page: {number:0}}));
         },
         loadActivities: (activities, isRefreshing) => {
             dispatch(loadActivities(activities, isRefreshing));
+        },
+        updateTimelineState: ({links, page}) => {
+            dispatch(updateTimelineState({links, page}));
         }
     }
   }

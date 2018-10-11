@@ -5,8 +5,10 @@ export const initialState = {
     timeline: {
       selectedActivity: null,
       isRefreshing: false,
-      seed: 0,
-      page: 0,
+      links: {next: null},
+      page: {
+        number: 0
+      },
       activities: [],
       isLoading: false
     },
