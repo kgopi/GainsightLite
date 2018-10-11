@@ -30,6 +30,7 @@ import {name as appName} from './app.json';
 import configureStore from './src/Store';
 import {Provider} from 'react-redux';
 import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
+import {PushNotificationControl} from "./src/views/NotificationController";
 
 // you can set your style right here, it'll be propagated to application
 const uiTheme = {
@@ -49,6 +50,7 @@ const RNRedux = () => (
   <Provider store = { store }>
       <ThemeContext.Provider value={getTheme(uiTheme)}>
           <App />
+          <PushNotificationControl/>
       </ThemeContext.Provider>
   </Provider>
 )

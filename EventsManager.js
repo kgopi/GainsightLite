@@ -1,10 +1,6 @@
-import {
-  notify
-} from './src/services/NotifService';
-import {
-  Alert
-} from 'react-native';
+import {Alert} from 'react-native';
 import { getAuthToken } from './src/services/Timeline';
+import {notifyMesage} from "./src/views/NotificationController";
 const SocketClient = require("socketcluster-client").create;
 
 class EventsManager {
@@ -41,7 +37,7 @@ class EventsManager {
               var broadcastChannel = socket.subscribe(`broadcast/1P01XB2BOT21HRIIZB3P6WRDB28LGVKHWV75`);
               broadcastChannel.watch((data) => {
                   debugger;
-                  notify(data);
+                  //notifyMesage(data);
               });
           });
 
