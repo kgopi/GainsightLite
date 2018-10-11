@@ -37,7 +37,6 @@ class Timeline extends React.Component {
                 </List>
             );
         }else{
-            debugger;
             return (
                 <ActivityDetailView activity={this.props.selectedActivity}></ActivityDetailView>
             );

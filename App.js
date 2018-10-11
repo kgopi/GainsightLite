@@ -12,7 +12,7 @@ import Auth0 from 'react-native-auth0';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import {authCredentials} from './app.json';
-import MainContainer from './src/views/MainContainer';
+import {MainContainer} from './src/views/MainContainer';
 const auth0 = new Auth0(authCredentials);
 
 export default class App extends Component {
@@ -60,6 +60,7 @@ export default class App extends Component {
     }
 
     render() {
+        debugger;
         let loggedIn = this.state.accessToken === null ? false : true;
         if(loggedIn){
             return (

@@ -8,7 +8,6 @@ export const changeAppTitle = title => {
 }
 
 export const onChangeTab = selectedTab => {
-  debugger;
   return {
     type: ON_TAB_CHANGE,
     payload: {selectedTab}
