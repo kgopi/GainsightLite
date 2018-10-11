@@ -13,7 +13,6 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -28,8 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new A0Auth0Package(),
-          new VectorIconsPackage(),
-          new ReactNativePushNotificationPackage()
+          new VectorIconsPackage()
       );
     }
 
