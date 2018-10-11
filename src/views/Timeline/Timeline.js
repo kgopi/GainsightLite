@@ -1,87 +1,45 @@
 import React from 'react';
 import {FlatList, StyleSheet} from 'react-native';
 import {List} from 'react-native-elements';
-import {ActivityView} from "./ActivityView";
+import ActivityView from "./ActivityView";
 import { fetchActivities } from '../../services/Timeline';
 import { ActivityDetailView } from './ActivityDetailView';
+import {handleRefresh, handleLoadMore, loadActivities} from "./../../actions/timeline";
+import {connect} from 'react-redux';
 
-export class Timeline extends React.Component {
-
-    state = {
-        seed: 1,
-        page: 1,
-        activities: [],
-        selectedActivity: this.props.selectedActivity,
-        isLoading: false,
-        isRefreshing: false,
-    };
-
-    constructor(props){
-        super(props);
-    }
-
-    handleRefresh = () => {
-        this.setState({
-            seed: this.state.seed + 1,
-            isRefreshing: true,
-        }, () => {
-            this.loadActivities();
-        });
-    };
-
-    handleLoadMore = () => {
-        this.setState({
-            page: this.state.page + 1
-        }, () => {
-            this.loadActivities();
-        });
-    };
+class Timeline extends React.Component {
 
     componentDidMount() {
         this.loadActivities();
-    };
+    }
 
     loadActivities = () => {
-        const { activities, seed, page } = this.state;
-        this.setState({ isLoading: true });
+        const { activities, seed, page } = this.props;
         fetchActivities({seed, page}).then(res => {
-            this.setState({
-                activities: page === 1 ? res.results : [...activities, ...res.results],
-                isRefreshing: false,
-            });
+            this.props.loadActivities(page === 1 ? res.results : [...activities, ...res.results], false);
         })
     }
 
-    onDetailView = (activity) => {
-        this.setState({
-            selectedActivity: activity
-        });
-        this.props.onDetailView({
-            selectedItem: activity,
-            title: 'Timeline'
-        });
-    }
-
     render() {
-        const { activities, isRefreshing, selectedActivity } = this.state;
-        debugger;
+        const { activities, isRefreshing, selectedActivity } = this.props;
         if(selectedActivity == null){
             return (
                 <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
-                            renderItem={({item})=>{return (<ActivityView onDetailView={this.onDetailView} item={item}></ActivityView>)}}
+                            renderItem={({item})=>{return (<ActivityView item={item}></ActivityView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
-                            onRefresh={this.handleRefresh}
-                            onEndReached={this.handleLoadMore}
+                            onRefresh={()=>{this.props.handleRefresh(this.props.seed+1); this.loadActivities();}}
+                            onEndReached={()=>{this.props.handleLoadMore(this.props.page+1); this.loadActivities();}}
                             onEndThreshold={0}
                         />
                 </List>
             );
         }else{
+            debugger;
             return (
-                <ActivityDetailView activity={this.state.selectedActivity}></ActivityDetailView>
+                <ActivityDetailView activity={this.props.selectedActivity}></ActivityDetailView>
             );
         }
     }
@@ -100,3 +58,30 @@ const style = StyleSheet.create({
         color: '#fff'
     }
 });
+
+const mapStateToProps = state => {
+    return {
+        seed: state.app.timeline.seed,
+        page: state.app.timeline.page,
+        activities: state.app.timeline.activities,
+        selectedActivity: state.app.timeline.selectedActivity,
+        isLoading: state.app.timeline.isLoading,
+        isRefreshing: state.app.timeline.isRefreshing
+    }
+  }
+  
+  const mapDispatchersToProps = dispatch => {
+    return {
+        handleRefresh: (seed) => {
+            dispatch(handleRefresh(seed));
+        },
+        handleLoadMore: (page) => {
+            dispatch(handleLoadMore(page));
+        },
+        loadActivities: (activities, isRefreshing) => {
+            dispatch(loadActivities(activities, isRefreshing));
+        }
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchersToProps)(Timeline);

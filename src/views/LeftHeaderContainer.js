@@ -1,18 +1,20 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {connect} from 'react-redux';
+import {goToHome} from "./../actions/timeline";
 
-export default class LeftHeaderContainer extends Component<Props> {
+class LeftHeaderContainer extends Component<Props> {
     render() {
       return (
         <View style={styles.leftContainer}>
             {
-              this.props.state.isDetailView && 
+              this.props.isDetailView && 
                 (<View>
-                  <Icon name="arrow-back" color='#fff' size={23} />
+                  <Icon name="arrow-back" color='#fff' size={23} onPress={() => this.props.goToHome()} />
                 </View>)
             }
-            <Text style={styles.logoText}>{this.props.state.title}</Text>
+            <Text style={styles.logoText}>{this.props.title}</Text>
         </View>
       );
     }
@@ -31,3 +33,20 @@ const styles = StyleSheet.create({
       marginLeft: 10
     }
   });
+
+  const mapStateToProps = state => {
+    return {
+        title: state.app.title,
+        isDetailView: state.app.isDetailView
+    }
+  }
+
+  const mapDispatchersToProps = dispatch => {
+    return {
+        goToHome: () => {
+            dispatch(goToHome());
+        }
+    }
+}
+  
+  export default connect(mapStateToProps, mapDispatchersToProps)(LeftHeaderContainer)

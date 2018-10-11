@@ -2,14 +2,10 @@ import React, {Component} from 'react';
 import HeaderContainer from './HeadContainer';
 import ContentContainer from './ContentContainer';
 import {StyleSheet, View} from 'react-native';
+import { connect } from 'react-redux';
+import { changeAppTitle } from './../actions/app';
 
-export default class MainContainer extends Component<Props> {
-
-    state = {
-        title: "Gainsight Lite",
-        isDetailView: false,
-        selectedActivity: null
-    }
+export class MainContainer extends Component<Props> {
 
     constructor(props) {
         super(props);  
@@ -18,15 +14,10 @@ export default class MainContainer extends Component<Props> {
     render() {
       return (
         <View style={styles.mainContainer}>
-            <HeaderContainer state={this.state}></HeaderContainer>
-            <ContentContainer state={this.state} onDetailView={this.onDetailView}></ContentContainer>
+            <HeaderContainer></HeaderContainer>
+            <ContentContainer></ContentContainer>
         </View>
       );
-    }
-
-    onDetailView = ({title, selectedItem}) => {
-        debugger;
-        this.setState({title, isDetailView:true, selectedActivity: selectedItem});
     }
 }
 

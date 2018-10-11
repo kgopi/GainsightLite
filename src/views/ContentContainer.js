@@ -1,16 +1,18 @@
 import React, {Component} from 'react';
-import { Timeline } from '../views/Timeline/Timeline';
+import Timeline from '../views/Timeline/Timeline';
 import { CTAList } from '../views/CTA/CTAList';
 import {StyleSheet, View} from 'react-native';
-import ScrollableTabView from 'react-native-scrollable-tab-view'
+import ScrollableTabView from 'react-native-scrollable-tab-view';
+import {onChangeTab} from './../actions/app'; 
+import {connect} from 'react-redux';
 
-export default class ContentContainer extends Component<Props> {
+class ContentContainer extends Component<Props> {
 
     render() {
-        if(this.props.state.isDetailView){
+        if(this.props.isDetailView){
             return (
                 <View style={styles.container}>
-                    <Timeline onDetailView={this.props.onDetailView} tabLabel="Timeline" />
+                    <Timeline tabLabel="Timeline" />
                 </View>
               );
         }else{
@@ -22,11 +24,11 @@ export default class ContentContainer extends Component<Props> {
                             tabBarBackgroundColor ="#558dfd"
                             tabBarActiveTextColor="#fff"
                             tabBarInactiveTextColor="#88b0ac"
-                            onChangeTab={(index) => {return this.props.onChangeTab(index)}}
+                            onChangeTab={(tab) => {this.props.onChangeTab(tab.i)}}
                     >
-                        <Timeline onDetailView={this.props.onDetailView} tabLabel="Timeline" />
-                        <CTAList onDetailView={this.props.onDetailView} tabLabel="CTA" />
-                        <Timeline onDetailView={this.props.onDetailView} tabLabel="CS360" />
+                        <Timeline tabLabel="Timeline" />
+                        <CTAList tabLabel="CTA" />
+                        <Timeline  tabLabel="CS360" />
                     </ScrollableTabView>
                 </View>
               );
@@ -40,3 +42,19 @@ const styles = StyleSheet.create({
         flex: 10
     }
   });
+
+  const mapStateToProps = state => {
+    return {
+        isDetailView: state.isDetailView
+    }
+  }
+  
+  const mapDispatchersToProps = dispatch => {
+    return {
+        onChangeTab: (selectedTab) => {
+            dispatch(onChangeTab(selectedTab));
+        }
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchersToProps)(ContentContainer);

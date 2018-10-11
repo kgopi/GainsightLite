@@ -6,7 +6,7 @@ export class ActivityDetailView extends React.Component{
     render(){
         return (
             <View>
-                <Text>{this.props.activity.note.content}</Text>
+                <Text>{this.props.activity.name.first}</Text>
             </View>
         );
     }
