@@ -45,7 +45,7 @@ class Timeline extends React.Component {
             );
         }else{
             return (
-                <ActivityDetailView activity={this.props.selectedActivity}></ActivityDetailView>
+                <ActivityDetailView item={this.props.selectedActivity}></ActivityDetailView>
             );
         }
     }
