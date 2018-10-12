@@ -12,15 +12,6 @@ class Timeline extends React.Component {
 
     componentDidMount() {
         this.loadActivities();
-        AppState.addEventListener('change', this.handleAppStateChange);
-    }
-
-    componentWillUnmount() {
-        AppState.removeEventListener('change', this.handleAppStateChange);
-    }
-
-    handleAppStateChange(){
-        notifyMesage('Title', 'Faasak Faask');
     }
 
     loadActivities = () => {
@@ -37,7 +28,7 @@ class Timeline extends React.Component {
             this.props.updateTimelineState({links: data.links, page: data.page});
             this.props.loadActivities(page.number === 0 ? data.content : [...activities, ...data.content], false);
         });
-    }
+    };
 
     render() {
         const { activities, isRefreshing, selectedActivity, navigation } = this.props;

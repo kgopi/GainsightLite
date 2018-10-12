@@ -6,8 +6,9 @@ import {
     StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
-import {onSignedIn} from "../../actions/app";
+import {onSignedIn, onSignedInprogress, onUserInfoLoaded} from "../../actions/app";
 import {auth0} from "./webauth";
+import {fetchBootstrap} from "../../services/GSBootstrap";
 
 
 const styles = StyleSheet.create({
@@ -31,8 +32,35 @@ class SignInScreen extends Component {
         if(!userToken){
             this._authenticate();
         } else {
-            this.props.navigation.navigate('Home');
+            this._getUserDetails();
         }
+    };
+
+    _onUserDetailsFailed = ()=>{
+        this.props.toggleLoader(false);
+        Alert.alert(
+            'Error',
+            `Failed to get user details. Please try again`,
+            [{ text: 'RETRY', onPress: () => {
+                    this._getUserDetails();
+                }}],
+            { cancelable: false }
+        );
+    };
+
+    _getUserDetails = () =>{
+        this.props.toggleLoader(true);
+        return fetchBootstrap().then((res)=>{
+            if(!res || !res.data){
+                this._onUserDetailsFailed();
+            } else {
+                this.props.toggleLoader(false);
+                this.props.handleBootstrap(res.data);
+                this.props.navigation.navigate('Home');
+            }
+        }).catch(()=>{
+            this._onUserDetailsFailed();
+        });
     };
 
     _authenticate = () => {
@@ -70,7 +98,7 @@ class SignInScreen extends Component {
 const mapStateToProps = state => {
     return {
         userToken: state.app.userToken,
-        showLoader: !state.app.userToken
+        showLoader: state.app.signin.showLoader
     }
 };
 
@@ -78,7 +106,13 @@ const mapDispatchersToProps = dispatch => {
     return {
         handleSignIn: (userToken)=> {
             dispatch(onSignedIn(userToken));
-        }
+        },
+        toggleLoader:(showLoader)=>{
+            dispatch(onSignedInprogress(showLoader));
+        },
+        handleBootstrap:(data)=> {
+            dispatch(onUserInfoLoaded(data));
+        },
     }
 };
 

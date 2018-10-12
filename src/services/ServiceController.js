@@ -6,6 +6,8 @@ export const TIMELINE_URL = GATEWAY_URL + "/v1/ant/timeline";
 
 export const CTA_URL = GATEWAY_URL + "/v1/cockpit";
 
+export const GS_BOOTSTRAP = `${GATEWAY_URL}/v1.0/api/gnative/bootstrap`;
+
 export function getHeaders(){
 
     let currentState = store.getState();

@@ -3,6 +3,9 @@ export const initialState = {
     isDetailView: false,
     selectedTab: 0,
     searchText: "",
+    signin:{
+        showLoader:true
+    },
     timeline: {
       selectedActivity: null,
       isRefreshing: false,
