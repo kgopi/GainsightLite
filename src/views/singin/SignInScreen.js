@@ -7,9 +7,11 @@ import {
     StatusBar,
     Platform
 } from 'react-native';
+import {connect} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Auth0 from 'react-native-auth0';
 import {authCredentials} from "../../../app";
+import {onSignedIn} from "../../actions/app";
 
 const auth0 = new Auth0(authCredentials);
 auth0.webAuth.client.authorizeUrl = function(query){
@@ -32,21 +34,18 @@ const styles = StyleSheet.create({
     }
 });
 
-export class SignInScreen extends Component {
+class SignInScreen extends Component {
     constructor(props) {
         super(props);
-        this.state = {showLoader:true};
         this._bootstrapAsync();
     }
 
     // Fetch the token from storage then navigate to our appropriate place
-    _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken');
-
+    _bootstrapAsync = () => {
+        const userToken = this.props.userToken;
         if(!userToken){
             this._authenticate();
         } else {
-            this.setState({showLoader:false});
             this.props.navigation.navigate('Home');
         }
     };
@@ -56,14 +55,17 @@ export class SignInScreen extends Component {
             .authorize()
             .then((credentials) => {
                 console.log(`AccessToken: ${ credentials.code}`);
-                AsyncStorage.setItem('userToken', credentials.code).then(() => this._bootstrapAsync());
+                this.props.handleSignIn(credentials.code);
+                this._bootstrapAsync();
             })
             .catch(error => {
                 console.log(error);
                 Alert.alert(
                     'Failed',
                     `Failed to authenticate ${error}`,
-                    [{ text: 'RETRY', onPress: () => this._authenticate()}],
+                    [{ text: 'RETRY', onPress: () => {
+                            //this._authenticate();
+                        }}],
                     { cancelable: false }
                 );
             });
@@ -73,10 +75,27 @@ export class SignInScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Spinner visible={this.state.showLoader} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
+                <Spinner visible={this.props.showLoader} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
                 <StatusBar barStyle="default" />
             </View>
         );
     }
 }
 
+const mapStateToProps = state => {
+    debugger;
+    return {
+        userToken: state.app.userToken,
+        showLoader: !state.app.userToken
+    }
+};
+
+const mapDispatchersToProps = dispatch => {
+    return {
+        handleSignIn: (userToken)=> {
+            dispatch(onSignedIn(userToken));
+        }
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchersToProps)(SignInScreen);

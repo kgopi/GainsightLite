@@ -1,3 +1,4 @@
+export const USER_SIGNED_IN = 'USER_SIGNED_IN';
 export const ADD_ACTIVITY = 'ADD_ACTIVITY';
 export const CHANGE_APP_TITLE = 'CHANGE_APP_TITLE';
 export const ON_TAB_CHANGE = 'ON_TAB_CHANGE';

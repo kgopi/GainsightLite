@@ -1,4 +1,4 @@
-import { CHANGE_APP_TITLE, ON_TAB_CHANGE, ON_SEARCH } from './types';
+import { CHANGE_APP_TITLE, ON_TAB_CHANGE, ON_SEARCH, USER_SIGNED_IN} from './types';
 
 export const changeAppTitle = title => {
   return {
@@ -20,3 +20,10 @@ export const onSearch = text => {
     payload: text
   }
 }
+
+export const onSignedIn = userToken =>{
+  return {
+     type: USER_SIGNED_IN,
+     payload: userToken
+  }
+};

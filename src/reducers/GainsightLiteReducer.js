@@ -1,12 +1,14 @@
-import { 
-  ADD_ACTIVITY, ON_TAB_CHANGE, LOAD_ACTIVITIES, HANDLE_REFRESH, HANDLE_LOAD_MORE, SHOW_DETAIL_VIEW,
-  GO_HOME, UPDATE_TIMELINE_DATA, ON_SEARCH, SHOW_CTA_DETAIL_VIEW, UPDATE_CTA_DATA, LOAD_CTAS
+import {
+    ADD_ACTIVITY, ON_TAB_CHANGE, LOAD_ACTIVITIES, HANDLE_REFRESH, HANDLE_LOAD_MORE, SHOW_DETAIL_VIEW,
+    GO_HOME, UPDATE_TIMELINE_DATA, ON_SEARCH, SHOW_CTA_DETAIL_VIEW, UPDATE_CTA_DATA, LOAD_CTAS, USER_SIGNED_IN
 } from '../actions/types';
 import {initialState} from '../State';
 
 export const GainsightLiteReducer = (state = initialState, action) => {
   let newState;
   switch(action.type) {
+    case USER_SIGNED_IN:
+        return newState = {...state, userToken:action.payload};
     case HANDLE_REFRESH:
       newState = {...state};
       newState.timeline = {...newState.timeline, ...action.payload.timeline}
