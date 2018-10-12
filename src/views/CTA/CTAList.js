@@ -1,11 +1,10 @@
 import React from 'react';
-import {FlatList, StyleSheet, View, Platform} from 'react-native';
+import {FlatList, StyleSheet, View, Platform, ActivityIndicator} from 'react-native';
 import {List, Icon, Text} from 'react-native-elements';
 import { fetchCTAs } from '../../services/CTA';
 import {updateCTAState, handleLoadMore, loadCtas} from "../../actions/cta";
 import {connect} from 'react-redux';
 import CTAView from './../../views/CTA/CTAView';
-import { CtaDetailView } from './CtaDetailView';
 const isAndroid = Platform.OS == "android";
 import {COLOR} from 'react-native-material-ui';
 
@@ -19,46 +18,46 @@ class CTAList extends React.Component {
         const {ctas} = this.props;
 
         console.log("CTAs loading");
+        this.props.updateState({isLoading:true});
         fetchCTAs().then(res => {
             let data = res.data;
-            this.props.loadCtas(ctas.length === 0 ? data.ctas : [...ctas, ...data.ctas], false);
+            this.props.updateState({ctas: data.ctas||[], selectedCta: null, isRefreshing: false,isLoading:false});
         });
     }
 
     render() {
-        const { ctas, isRefreshing, selectedCta } = this.props;
-        if(selectedCta == null){
-            if(ctas.length == 0){
-                return (
-                    <View style={{paddingTop: 40, flexDirection: 'column', alignItems: 'center'}}>
-                        <Icon
-                            reverse
-                            name={isAndroid ? 'md-folder-open' : 'ios-folder-open'}
-                            type='ionicon'
-                            color={COLOR.grey400}
-                        />
-                        <Text>
-                            {"No CTA's found.."}
-                        </Text>
-                    </View>
-                );
-            }else{
-                return (
-                    <List style={{flex: 1, backgroundColor: 'green'}} contentContainerStyle={{flex: 1}} containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
-                            <FlatList
-                                data={ctas}
-                                renderItem={({item})=>{return (<CTAView item={item}></CTAView>)}}
-                                keyExtractor={(item, index) => index+""}
-                                refreshing={isRefreshing}
-                                onRefresh={()=>{this.props.resetState(); this.loadCtas();}}
-                                onEndThreshold={0.1}
-                            />
-                    </List>
-                );
-            }
+        const { ctas, isRefreshing, selectedCta, isLoading} = this.props;
+        let progress = isLoading?<ActivityIndicator size="large" color="#0000ff" />:null;
+        if(ctas.length == 0 && isRefreshing){
+            return <ActivityIndicator size="large" color="#0000ff" />;
+        } else  if(ctas.length == 0){
+            return (
+                <View style={{paddingTop: 40, flexDirection: 'column', alignItems: 'center'}}>
+                    <Icon
+                        reverse
+                        name={isAndroid ? 'md-folder-open' : 'ios-folder-open'}
+                        type='ionicon'
+                        color={COLOR.grey400}
+                    />
+                    <Text>
+                        {"No CTA's found.."}
+                    </Text>
+                    {progress}
+                </View>
+            );
         }else{
             return (
-                <CtaDetailView item={this.props.selectedCta}></CtaDetailView>
+                <View style={{flex: 1}}>
+                        <FlatList
+                            data={ctas}
+                            renderItem={({item})=>{return (<CTAView item={item}></CTAView>)}}
+                            keyExtractor={(item, index) => index+""}
+                            refreshing={isRefreshing}
+                            onRefresh={()=>{this.props.resetState(); this.loadCtas();}}
+                            onEndThreshold={0.1}
+                        />
+                        {progress}
+                </View>
             );
         }
     }
@@ -76,11 +75,11 @@ const mapStateToProps = state => {
   
   const mapDispatchersToProps = dispatch => {
     return {
-        loadCtas: (ctas, isRefreshing) => {
-            dispatch(loadCtas(ctas, isRefreshing));
-        },
         resetState: () => {
-            dispatch(updateCTAState({ctas: [], selectedCta: null, isRefreshing: true}));
+            dispatch(updateCTAState({ctas: [], selectedCta: null, isRefreshing: true, isLoading:false}));
+        },
+        updateState: (payload) =>{
+            dispatch(updateCTAState(payload));
         }
     }
   }
