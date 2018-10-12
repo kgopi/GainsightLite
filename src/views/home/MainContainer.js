@@ -4,7 +4,7 @@ import {createMaterialTopTabNavigator} from "react-navigation";
 import {displayName} from "../../../app.json";
 import {HomeToolbar} from "./HomeToolbar";
 import {CTAList} from "../calltoaction/CTAList";
-import Timeline from "../timeline/Timeline";
+import Timeline from "../activitytimeline/Timeline";
 
 const TabsStack = createMaterialTopTabNavigator({
     "Time Line":Timeline,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Timeline from '../timeline/Timeline';
+import Timeline from '../activitytimeline/Timeline';
 import { CTAList } from '../calltoaction/CTAList';
 import {StyleSheet, View} from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
