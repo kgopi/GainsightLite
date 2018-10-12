@@ -1,13 +1,10 @@
 import React from 'react';
-import {FlatList, StyleSheet, AppState, Platform, View, Switch, Text} from 'react-native';
-import {List} from 'react-native-elements';
+import {FlatList, StyleSheet, AppState, Platform, View, Switch, Text, ActivityIndicator} from 'react-native';
 import ActivityView from "./ActivityView";
 import { fetchActivities } from '../../services/Timeline';
-import { ActivityDetailView } from './activitydetails/ActivityDetailView';
 import {handleRefresh, handleLoadMore, loadActivities, updateTimelineState} from "./../../actions/timeline";
 import {connect} from 'react-redux';
-import {notifyMesage} from "../NotificationController";
-import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
+import { COLOR} from 'react-native-material-ui';
 
 class Timeline extends React.Component {
 
@@ -18,24 +15,30 @@ class Timeline extends React.Component {
     loadActivities = () => {
         const {activities, links, page, searchText, selfMode} = this.props;
 
-        if(links.next == null && page.number > 0){
+        if((!links.next||!links.next.href) && activities.length>0){
             return; // No more activities
         }
 
         console.log('Load activities');
-        let query = selfMode ? `${encodeURIComponent('(uid#1P01XB2BOT21HRIIZB3P6WRDB28LGVKHWV75)')}` : '';
-        fetchActivities({links, page, searchText, query}).then(res => {
-            let data = res.data;
+        let userId = `(uid#${this.props.userId})`;
+        let query = selfMode ? `${encodeURIComponent(userId)}` : '';
+        this.props.updateTimelineState({isLoading:true});
+        fetchActivities({links, page, searchText, query, activities}).then(res => {
+            this.props.updateTimelineState({isLoading:false});
+            let data = res && res.data;
+            if(!data) return;
             this.props.updateTimelineState({links: data.links, page: data.page});
             this.props.loadActivities(page.number === 0 ? data.content : [...activities, ...data.content], false);
         });
     };
 
     render() {
-        const { activities, isRefreshing, selectedActivity, navigation } = this.props;
-        if(selectedActivity == null){
+        const { activities, isRefreshing, navigation,isLoading } = this.props;
+
+            let progress = isLoading?<ActivityIndicator size="large" color="#0000ff" />:null;
+
             return (
-                <View>
+                <View style={styles.listcntr}>
                     <View style={{backgroundColor: COLOR.grey50, paddingTop: 5, paddingBottom: 5, flexDirection: 'row', justifyContent: 'flex-end'}}>
                         <Text style={{top: 4, fontSize: 14, fontWeight: 'bold'}}>{"Show mine"}</Text>
                         <Switch
@@ -49,28 +52,39 @@ class Timeline extends React.Component {
                                 value = {this.props.selfMode}
                         />
                     </View>
-                    <List style={{flex: 1, backgroundColor: 'green'}} contentContainerStyle= {{flex: 1}} containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
+                    <View style={{flex: 1}}>
                         <FlatList
                             data={activities}
                             renderItem={({item})=>{return (<ActivityView item={item} navigation={navigation}></ActivityView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
-                            onRefresh={()=>{this.props.handleRefresh(); this.loadActivities();}}
-                            onEndReached={()=>{this.loadActivities();}}
-                            onEndThreshold={0.1}
+                            onRefresh={()=>{
+                                this.props.handleRefresh();
+                                this.loadActivities(true);
+                            }}
+                            onEndReached={(info)=>{
+                                console.log(info, this.props.isLoading);
+                                if(!this.props.isLoading){
+                                    console.log("loading activities");
+                                    this.loadActivities();
+                                }
+                            }}
+                            onEndReachedThreshold={0.1}
                         />
-                    </List>
+                    </View>
+                    {progress}
                 </View>
             );
-        }else{
-            return (
-                <ActivityDetailView item={this.props.selectedActivity}></ActivityDetailView>
-            );
-        }
     }
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
+    listcntr:{
+      flex:1,
+      height:'100%',
+      display:'flex',
+      flexDirection:'column'
+    },
     activity: {
         width: '100%',
         backgroundColor: '#333',
@@ -93,20 +107,21 @@ const mapStateToProps = state => {
         isLoading: state.app.timeline.isLoading,
         isRefreshing: state.app.timeline.isRefreshing,
         searchText: state.app.searchText,
-        selfMode: state.app.timeline.selfMode
+        selfMode: state.app.timeline.selfMode,
+        userId:state.app.GS.user.id
     }
   }
   
   const mapDispatchersToProps = dispatch => {
     return {
         handleRefresh: () => {
-            dispatch(updateTimelineState({links: {next: null}, page: {number:0}, selfMode: false}));
+            dispatch(updateTimelineState({links: {next: null}, page: {number:0}, selfMode: false, isRefreshing:true}));
         },
         loadActivities: (activities, isRefreshing) => {
             dispatch(loadActivities(activities, isRefreshing));
         },
-        updateTimelineState: ({links, page}) => {
-            dispatch(updateTimelineState({links, page}));
+        updateTimelineState: (payload) => {
+            dispatch(updateTimelineState(payload));
         },
         updateToggleMode: (selfMode)=>{
             dispatch(updateTimelineState({selfMode}));

@@ -1,14 +1,24 @@
 import {TIMELINE_URL, getHeaders, GATEWAY_URL} from './ServiceController';
 
-export function fetchActivities({links, page, searchText="", query=""}){
+export function fetchActivities({links, page, searchText="", query="", activities}){
     let url;
-    if(page.number == 0){
+    if(!activities || !activities.length){
         url = TIMELINE_URL + `/search/activity/?to=4096788558000&t=${searchText}&page=0&size=20&q=${query}`;
-    }else if(links.next != null){
-        url = links.next;
+    } else if(links.next && links.next.href){
+        url = links.next.href;
     }
+
     return fetch(url,{method: 'GET',headers: getHeaders()})
-        .then(res => res.json())
+        .then(res => res.json()).then((res)=>{
+            if(res && res.data && res.data.links){
+                let lmp = {};
+                res.data.links.forEach((link)=>{
+                    lmp[link.rel] = link;
+                });
+                res.data.links = lmp;
+            }
+            return res;
+        })
         .catch(err => {
             console.error(err);
         });
