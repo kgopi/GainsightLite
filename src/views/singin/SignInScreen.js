@@ -4,13 +4,24 @@ import {
     View,
     StyleSheet,
     AsyncStorage,
-    StatusBar
+    StatusBar,
+    Platform
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import Auth0 from 'react-native-auth0';
 import {authCredentials} from "../../../app";
 
 const auth0 = new Auth0(authCredentials);
+auth0.webAuth.client.authorizeUrl = function(query){
+    return `https://${authCredentials.domain}/v1/ui/timeline/${Platform.OS}?state=${query.state}`;
+};
+auth0.webAuth.client.exchange = function (params) {
+    if(params.code){
+        return Promise.resolve(params);
+    } else {
+        return Promise.reject(`Authorization failed`);
+    }
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -24,6 +35,7 @@ const styles = StyleSheet.create({
 export class SignInScreen extends Component {
     constructor(props) {
         super(props);
+        this.state = {showLoader:true};
         this._bootstrapAsync();
     }
 
@@ -34,19 +46,17 @@ export class SignInScreen extends Component {
         if(!userToken){
             this._authenticate();
         } else {
+            this.setState({showLoader:false});
             this.props.navigation.navigate('Home');
         }
     };
 
     _authenticate = () => {
         auth0.webAuth
-            .authorize({
-                scope: 'openid profile',
-                audience: 'https://' + authCredentials.domain + '/userinfo'
-            })
+            .authorize()
             .then((credentials) => {
-                console.log(`AccessToken: ${ credentials.accessToken}`);
-                AsyncStorage.setItem('userToken', credentials.accessToken).then(() => this._bootstrapAsync());
+                console.log(`AccessToken: ${ credentials.code}`);
+                AsyncStorage.setItem('userToken', credentials.code).then(() => this._bootstrapAsync());
             })
             .catch(error => {
                 console.log(error);
@@ -63,7 +73,7 @@ export class SignInScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Spinner visible={true} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
+                <Spinner visible={this.state.showLoader} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
                 <StatusBar barStyle="default" />
             </View>
         );
