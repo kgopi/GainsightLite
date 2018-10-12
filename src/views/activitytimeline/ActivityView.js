@@ -15,13 +15,13 @@ ContextLabelMapper['CTA'] = "CTA";
 class ActivityView extends React.Component{
 
     render() {
-        let contextName = this.props.item.contexts[this.props.item.contexts.length-1].obj;
+        let contextObj = this.props.item.contexts[this.props.item.contexts.length-1];
         return (<ListItem
                     roundAvatar
                     title={
                         <View style={styles.titleView}>
-                            <Text style={styles.entity}>{ContextLabelMapper[contextName]}</Text>
-                            <Text style={styles.entityName}>{contextName}</Text>
+                            <Text style={styles.entity}>{ContextLabelMapper[contextObj.obj]}</Text>
+                            <Text style={styles.entityName}>{contextObj.lbl}</Text>
                         </View>
                     }
                     subtitle={

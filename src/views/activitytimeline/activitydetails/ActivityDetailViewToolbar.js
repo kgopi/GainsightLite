@@ -4,9 +4,9 @@ import {displayName} from "../../../../app.json";
 
 export class ActivityDetailViewToolbar extends Component{
     render(){
-        const { navigation, routeparams } = this.props;
+        const {routeparams } = this.props;
         const item = routeparams.item||{};
-        let contextName = item.contexts[item.contexts.length-1].obj;
+        let contextName = item.contexts[item.contexts.length-1].lbl;
 
         return <Toolbar
             leftElement="arrow-back"

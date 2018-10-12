@@ -38,36 +38,26 @@ export class ActivityDetailView extends React.Component{
     render(){
         const { navigation } = this.props;
         const item = navigation.getParam('item', {});
-        let contextName = item.contexts[item.contexts.length-1].obj;
+        let contextObj = item.contexts[item.contexts.length-1];
         return (
             <View style={styles.view}>
                 <View style={styles.header}>
                     {
                         getLetterAvatar(item.author.name)
                     }
-                    <View>
-                        <View style={styles.titleView}>
-                            <Text style={styles.entity}>{ContextLabelMapper[contextName]}</Text>
-                            <Text style={styles.entityName}>{contextName}</Text>
+                    <View style={styles.subtitleView}>
+                        <View style={styles.subtitleViewTop}>
+                            <Text style={styles.subject}>{item.note.subject}</Text>
                         </View>
-                        <View style={styles.subtitleView}>
-                            <View style={styles.subtitleViewTop}>
-                                <Text style={styles.subject}>{item.note.subject}</Text>
-                            </View>
-                            <View style={styles.subtitleViewBottom}>
-                                <Text style={styles.author}>{item.author.name}</Text>
-                                <Text style={styles.date}>{moment(item.note.activityDate).format("DD/MM/YYYY h:mm a")}</Text>
-                            </View>
+                        <View style={styles.subtitleViewBottom}>
+                            <Text style={styles.author}>{item.author.name}</Text>
+                            <Text style={styles.date}>{moment(item.note.activityDate).format("DD/MM/YYYY h:mm a")}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={styles.body}>
-                    <ScrollView>
-                        <HTMLView
-                            value={htmlUnescape(item.note.content)}
-                        />
-                    </ScrollView>
-                </View>
+                <ScrollView style={styles.body}>
+                    <HTMLView value={htmlUnescape(item.note.content)}/>
+                </ScrollView>
             </View>
         );
     }
@@ -75,18 +65,26 @@ export class ActivityDetailView extends React.Component{
 
 const styles = StyleSheet.create({
     view:{
-        marginLeft: 10,
-        marginTop: 10,
-        marginRight: 10
+      backgroundColor:'#ffffff',
+      flex:1
     },
     header:{
+        paddingTop:10,
+        paddingBottom:10,
+        paddingLeft:10,
+        paddingRight:10,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#000000',
     },
     body:{
-        borderTopWidth: 0.5,
-        borderTopColor: '#97979733',
-        marginTop: 10
+        paddingTop:10,
+        paddingBottom:10,
+        paddingLeft:10,
+        paddingRight:10,
+        marginTop: 10,
+        fontSize:13
     },
     titleView:{
         flexDirection: 'row',
