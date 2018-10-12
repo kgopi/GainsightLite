@@ -83,7 +83,6 @@ class SignInScreen extends Component {
 }
 
 const mapStateToProps = state => {
-    debugger;
     return {
         userToken: state.app.userToken,
         showLoader: !state.app.userToken

@@ -5,8 +5,8 @@ const rootReducer = combineReducers({
   app: GainsightLiteReducer
 });
 
-const configureStore = () => {
+export function configureStore() {
   return createStore(rootReducer);
 }
 
-export default configureStore;
+export default configureStore();

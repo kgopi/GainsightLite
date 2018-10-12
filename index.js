@@ -27,7 +27,7 @@ import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
-import configureStore from './src/Store';
+import store from './src/Store';
 import {Provider} from 'react-redux';
 import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 import {PushNotificationControl} from "./src/views/NotificationController";
@@ -43,8 +43,6 @@ const uiTheme = {
         },
     },
 };
-
-const store = configureStore()
 
 const RNRedux = () => (
   <Provider store = { store }>

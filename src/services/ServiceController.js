@@ -1,3 +1,5 @@
+import store from '../Store';
+
 export const GATEWAY_URL ="https://abstract-gong360.develgs.com";
 
 export const TIMELINE_URL = GATEWAY_URL + "/v1/ant/timeline";
@@ -5,10 +7,14 @@ export const TIMELINE_URL = GATEWAY_URL + "/v1/ant/timeline";
 export const CTA_URL = GATEWAY_URL + "/v1/cockpit";
 
 export function getHeaders(){
+
+    let currentState = store.getState();
+    let userToken = currentState && currentState.app && currentState.app.userToken;
+
     return {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        cookie: `_ga=GA1.2.1794715968.1525259399; _gid=GA1.2.609880009.1539239286; ext_name=ojplmecpdpgccookcobabopnaifgidhf; bhInfV_cl_id=OeKWeOEPrEExuuy7ZPOZpOdgQq4s3U5BGlJ9yEQs4r9ekCU47N; sid=eyJlbmMiOiJBMTI4R0NNIiwiYWxnIjoiZGlyIn0..FpyP1tHPCUHTPVFu.SXGhGp8ItHi86WQbSrB1tqsdH3YpiMRhJRyi_pYjRCcWS6SmK4t9gu7TeT1d0tjKESDjHDuASek5BH-Ge7WVEyJYZ1nvVpAxY9kFQqqA8SGWAiAdWHNMhdtSBdy5nkJZqi2piCSD_NROg_DOKxN-lg5Mv7chMT5BI5i9Cndl7iHabVxllzcMZU5_inIrxUcq7iVFItJDycyG1bJTwKUXlLoiqr32-A2HZzI59MarnbqOtpiDdqwh6oFQL2vOz81B_QSoT7eDnFA0HG3EFTfmzwomhgiAOIQVRf82S-qOPxvFSvqZ8m88BISty00mnjlWf_S92zfo9THdikahSlB0BAD7_DZSj_6m_XXgnBuZHqnxEpoMUTNbYEgX2NTApeWGGG1nEAFR9hXt0ixLCCPlJ7VhmStg9sFGxGpiNaPb2ec2HkrJZewf77t__j8wMguqSsAZNfQTu-10x9rsUJrn_njEpRhin31VNjBAC2JAcTK4b-LZuRwQKcZ7oWFb3udAcRMLHlRfn76gRQBTzCNVvJM0JrnqBGzqGYKiggJGR3o2aaAZX-5MptUQQ-YTGjDw0Tl4viVh4bPNx9ehUugCd6EJ6quaDsxJM8XpPKw2IPBnwN4wBpURQBStnW_wAfVZhnfcwWs36EsIm0GI69MqTooqxjA5Kf-knb_S9_ybE2dAJ7PBfzMi9wVViMmdv4mAljbC9b4uJKt4iDheajS5PUkNXfqeJdUH6ZJ6w37ZpY5_CHI7NCPWeCib7TqzuCXL7S5jWzJ8ND_aM63wIw4eM1jDwojpAHcWAXAHQ6u4Nsj7-cj_sOfmxeksGvgyNMny_s66dYB7yOxMT8Hq5nkc_waW_McVUpDELuFr7_tX7YzWn_tq2ZirLEdjJyIzEjRwr5ImVDvD2UM86RzTQ0DxreTxMqjzw8O8NcVIrL_dFw-7N9GULWOMKTFJlVMnIzMpdr_VFGCSR43PTwkZy1D0eeJA-Ig9Xst_vkOCj644MrdBnzSB_jdfXr6X1MCKBorPgWu_maMhB8jepYi_Q_4DCs92k2cegl29PaTGsxxLjh3O6ZXFw7q1NxKzxlPNN9Qz6-FCeVsTXfcJXKpnzOlIus-Eto4O0DPi4Vm68Smf4Nn5WoXghkON4wPVfLsPHKg49DRFG1hs43SB9qAz7TC_3XbHxFc7NRzlw_Yw0ilQTnCmppiyHV8eXipGMA7pz96yvOvmW9guFlnBgA__rUWd9EviVw7gfA2y0L5WmruIbyYvKTaDWYNXUrzw-jgBKTKD83y84ylOcW-4KjqwZevWW1AjZwJFwXKL5CWr8B4i9uqNlBVmtIbG1uzHCVTRWedugFQXeInt97FiYyFD8lqFUa0EGuFTTQpHGpaVZ6jXCF5eYra5T-QLd4M1oBVxxkjh6Vj2lmY4O5x-UrMGn_af_eMNylMRG3QPJw_Yfqqm86a_tWLQ4Gd8akdKbsa3e_EHHm-n0CKODvISLDd0pvDNnW11VCE94Fv65SD4gEORnqn14rjcR0K-v4I_f3l5yvd7NuGAHZ4MYI4R_FsFd5VhTpyoPTScJt21IYpCYS_jfgwjWf68qjWNUWQQFjVT4h-b9t2yZY7y6-PZl-s1NqbBnUOGzN7l_5dOVJ0hqHQX8EDYSr86-N1YkjScSZ068iCOOicFgqr5w-XELTe6LZa1rYop0DDz6rsc4mR9Ftq-WZ6q1JxTDoaE0YbxRMFR2jjOcm4jhXhol4Lg8srRKBTcakrSCSNJE4fzfPT6T-_alTt4ETRRQnj4ksH1lhPUm3SSu-qJPz9YFT8KfDNRrL-gwNm_nrjUhybcHKLo1X_p2uCtm8tP5dNnTWs_h873Nz8fCgqy2tkrLMd0ft9I_V9YTKn1DqFc.4uaB1KqbW50OUGyWGpbAHg; _gat=1`,
+        cookie: `sid=${userToken}`,
         version: 'v3',
         'x-gs-native': true
       }
