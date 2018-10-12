@@ -1,20 +1,16 @@
 import React, { Component } from "react";
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   View,
   FlatList,
-  AsyncStorage,
-  Button,
   TextInput,
-  Keyboard,
-  Platform
+  Platform 
 } from "react-native";
-import {List, ListItem} from 'react-native-elements';
+import {List, ListItem, CheckBox} from 'react-native-elements';
 import {getLetterAvatar} from '../../utilities/LetterAvatar';
 import {showDetailView, showTasks} from "./../../actions/timeline";
-import {fetchTasks} from './../../services/CTA';
+import {fetchTasks, closeTask} from './../../services/CTA';
 var moment = require('moment');
 
 const ContextLabelMapper: any = {};
@@ -24,7 +20,38 @@ ContextLabelMapper['Relationship'] = "R";
 ContextLabelMapper['CTA'] = "CTA";
 
 class TaskView extends React.Component{
-    
+
+    constructor(props){
+        super(props);
+        this.state = {
+            IsClosed: this.props.item.IsClosed
+        }
+    }
+
+    saveTaskStatus(){
+        closeTask(this.props.item.Gsid, !this.state.IsClosed).then((res)=>{
+            this.setState({IsClosed: res.result ? !this.state.IsClosed : this.state.IsClosed});
+        });
+    }
+
+    render(){
+        return (
+            <View style={styles.listItem}>
+                <View style={styles.left}>
+                    <CheckBox
+                        title={this.props.item.Name}
+                        checked={this.state.IsClosed}
+                        style={{backgroundColor: '#eaeaea'}}
+                        onPress={() => this.saveTaskStatus()}
+                    />
+                </View>
+                <View style={styles.right}>
+                    <Text style={{alignItems: 'center', marginRight: 10}}>{moment(this.props.item.DueDate).format("DD/MM/YYYY h:mm a")}</Text>
+                    {getLetterAvatar(this.props.item.OwnerId__gr.FirstName)}
+                </View>
+            </View>
+        );
+    }
 }
 
 export default class TasksList extends React.Component{
@@ -45,20 +72,16 @@ export default class TasksList extends React.Component{
 
     render() {
         return (
-            <FlatList
-                data={this.state.tasks}
-                renderItem={({ item, index }) =>
-                    <View>
-                        <View style={styles.listItemCont}>
-                            <Text style={styles.listItem}>
-                                {item.Name}
-                            </Text>
-                            <Button title="X" onPress={() => this.deleteTask(index)} />
-                        </View>
-                        <View style={styles.hr} />
-                    </View>
-                }
-            />
+            <List>
+                <Text style={{marginTop: 10}}>{"Tasks"}</Text>
+                <FlatList
+                    data={this.state.tasks}
+                    keyExtractor={(item, index) => index+""}
+                    renderItem={({ item, index }) =>
+                        <TaskView Gsid={item.Gsid} item={item}></TaskView>
+                    }
+                />
+            </List>
         );
     }
 
@@ -67,37 +90,16 @@ export default class TasksList extends React.Component{
 const isAndroid = Platform.OS == "android";
 const viewPadding = 10;
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "#F5FCFF",
-      padding: viewPadding,
-      paddingTop: 20
+    left:{
+        alignItems: "flex-start",
+        flexDirection: "row"
     },
-    list: {
-      width: "100%"
+    right: {
+        alignItems: "flex-end",
+        flexDirection: 'row'
     },
     listItem: {
-      paddingTop: 2,
-      paddingBottom: 2,
-      fontSize: 18
-    },
-    hr: {
-      height: 1,
-      backgroundColor: "gray"
-    },
-    listItemCont: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between"
-    },
-    textInput: {
-      height: 40,
-      paddingRight: 10,
-      paddingLeft: 10,
-      borderColor: "gray",
-      borderWidth: isAndroid ? 0 : 1,
-      width: "100%"
+        display: 'flex',
+        flexDirection: "row"
     }
   });

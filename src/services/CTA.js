@@ -21,6 +21,18 @@ export function fetchCTAs(){
         });
 }
 
+export function closeTask(taskId, isClosed){
+    var url = CTA_URL + `/task/${isClosed ? 'close' : "reopen"}/${taskId}`;
+    return fetch(url, {
+        method: 'PUT',
+        headers: getHeaders()
+    })
+    .then(res => res.json())
+    .catch(err => {
+        console.error(err);
+    });
+}
+
 export function fetchTasks({ctaId, activityId}){
     var url = CTA_URL;
     if(activityId){
