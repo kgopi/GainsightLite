@@ -1,69 +1,85 @@
-import {Alert} from 'react-native';
-import { getAuthToken } from './src/services/Timeline';
-import {notifyMesage} from "./src/views/NotificationController";
+
+import {
+    notify
+} from './src/services/NotifService';
+import {
+    Alert
+} from 'react-native';
+import {
+    getAuthToken
+} from './src/services/Timeline';
 const SocketClient = require("socketcluster-client").create;
 
 class EventsManager {
 
-  constructor() {
-      this.initWebSocketConnection();
-  }
+    constructor() {
+        this.initWebSocketConnection();
+    }
 
-  initWebSocketConnection() {
+    notify(data){
+        var title, message;
+        if(data.area == "ANT"){
+            title = `${data.userName} posted a new Activity..`
+            message = `${data.data.subject}`;
+        }else{
+            title = "How are you man";
+            message = "How are you man";
+        }
+        notify(title, message);
+    }
 
-      let wsEndPoint = "";
+    initWebSocketConnection() {
 
-      if(wsEndPoint == null){
-      	return console.error(`Messenger server URL is absent`);
-      }
+        let wsEndPoint = "";
 
-      var options = {
-          host: "ant-messenger.develgs.com:443" || wsEndPoint.replace('wss://', ''),
-          secure: true,
-          path: "/",
-          autoReconnect: true,
-          query: {
-              id: null
-          },
-          multiplex: false
-      };
-      getAuthToken().done((res) => {
-          options.query.id = res.token;
+        if (wsEndPoint == null) {
+            return console.error(`Messenger server URL is absent`);
+        }
 
-          debugger;
-          const socket = SocketClient(options); // Initiate the connection to the server
-          socket.on('connect', () => {
-              console.log('WebSocket connection is successful ...');
-              var broadcastChannel = socket.subscribe(`broadcast/1P01XB2BOT21HRIIZB3P6WRDB28LGVKHWV75`);
-              broadcastChannel.watch((data) => {
-                  debugger;
-                  //notifyMesage(data);
-              });
-          });
+        var options = {
+            host: "ant-messenger.develgs.com:443" || wsEndPoint.replace('wss://', ''),
+            secure: true,
+            path: "/",
+            autoReconnect: true,
+            query: {
+                id: null
+            }
+        };
+        getAuthToken().done((res) => {
 
-          socket.on('messages', (messages) => {
-            //   debugger;
-            //   _.each(messages, (message) => {
-            //       this.onMessage(message, true);
-            //   })
-          });
+            if (res.token == null) {
+                console.log("Failed to get token to initialize Websocket connection");
+                return;
+            }
 
-          socket.on('connectAbort', (eve) => {
-              console.error(eve);
-          });
+            options.query.id = res.token;
 
-      });
-  }
+            const socket = SocketClient(options); // Initiate the connection to the server
+            socket.on('connect', () => {
+                console.log('WebSocket connection is successful ...');
+                var userChannel = socket.subscribe(`broadcast/e835971d-c3b0-461b-85aa-c079f0bb051a/1P01XB2BOT21HRIIZB3P6WRDB28LGVKHWV75`);
+                userChannel.watch((data) => {
+                    this.notify(data);
+                });
+                var tenantChannel = socket.subscribe(`broadcast/e835971d-c3b0-461b-85aa-c079f0bb051a`);
+                tenantChannel.watch((data) => {
+                    this.notify(data);
+                });
+            });
 
-  onRegister(token) {
-      Alert.alert("Registered !", JSON.stringify(token));
-      console.log(token);
-  }
+            socket.on('messages', (messages) => {
+                console.log('receivied messages', messages);
+            });
 
-  onNotif(notif) {
-      console.log(notif);
-      Alert.alert(notif.title, notif.message);
-  }
+            socket.on('connectAbort', (eve) => {
+                console.log("Connection aborted, retrying the connection", eve);
+                this.getAuthToken().done((res)=>{
+					options.query.id = res.data.token;
+				});
+            });
+
+        });
+    }
 
 }
 
