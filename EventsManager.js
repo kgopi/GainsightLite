@@ -53,15 +53,16 @@ class EventsManager{
                 console.log('WebSocket connection is successful ...');
 
                 let state = store.getState();
-                debugger;
                 let userId = state.app.GS.user.id;
                 let tenantId = state.app.GS.instance.id;
 
                 var userChannel = socket.subscribe(`broadcast/${tenantId}/${userId}`);
+                console.log(`Subscribed to broadcast/${tenantId}/${userId}`);
                 userChannel.watch((data) => {
                     this.notify(data);
                 });
                 var tenantChannel = socket.subscribe(`broadcast/${tenantId}`);
+                console.log(`Subscribed to broadcast/${tenantId}`);
                 tenantChannel.watch((data) => {
                     this.notify(data);
                 });

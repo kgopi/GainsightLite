@@ -36,7 +36,7 @@ export function fetchNextActivities(nextUrl){
 }
 
 export function getAuthToken(){
-    return fetch(GATEWAY_URL + `/v1/messenger/token`,{method: 'GET',headers: getHeaders()})
+    return fetch(GATEWAY_URL + `/v1/messenger/token?mobile`,{method: 'GET',headers: getHeaders()})
         .then(res => res.json())
         .catch(err => {
             console.error(err);

@@ -26,7 +26,10 @@ const TabsStack = createMaterialTopTabNavigator({
 export class MainContainer extends Component {
 
     static navigationOptions = {
-        header: <HomeToolbar />
+        header: ({navigation, scene})=>{
+            let params = scene.route.params||{};
+            return <HomeToolbar navigation={navigation} routeparams={params} />;
+        }
     };
 
     static router = TabsStack.router;
