@@ -1,10 +1,11 @@
 import React from "react";
 import {StyleSheet, View, Text, ScrollView} from 'react-native';
 import { Avatar } from "react-native-elements";
-var moment = require('moment');
 import HTMLView from 'react-native-htmlview';
-import {getLetterAvatar} from '../../utilities/LetterAvatar';
+import {getLetterAvatar} from '../../../utilities/LetterAvatar';
+import {ActivityDetailViewToolbar} from "./ActivityDetailViewToolbar";
 
+const moment = require('moment');
 const ContextLabelMapper: any = {};
 ContextLabelMapper['Account'] = "C";
 ContextLabelMapper['Company'] = "C";
@@ -27,13 +28,22 @@ function htmlUnescape(replaceStr:string):string{
 
 export class ActivityDetailView extends React.Component{
 
+    static navigationOptions = {
+        header: ({navigation, scene})=>{
+            let params = scene.route.params||{};
+            return <ActivityDetailViewToolbar navigation={navigation} routeparams={params} />
+        }
+    };
+
     render(){
-        let contextName = this.props.item.contexts[this.props.item.contexts.length-1].obj;
+        const { navigation } = this.props;
+        const item = navigation.getParam('item', {});
+        let contextName = item.contexts[item.contexts.length-1].obj;
         return (
             <View style={styles.view}>
                 <View style={styles.header}>
                     {
-                        getLetterAvatar(this.props.item.author.name)
+                        getLetterAvatar(item.author.name)
                     }
                     <View>
                         <View style={styles.titleView}>
@@ -42,11 +52,11 @@ export class ActivityDetailView extends React.Component{
                         </View>
                         <View style={styles.subtitleView}>
                             <View style={styles.subtitleViewTop}>
-                                <Text style={styles.subject}>{this.props.item.note.subject}</Text>
+                                <Text style={styles.subject}>{item.note.subject}</Text>
                             </View>
                             <View style={styles.subtitleViewBottom}>
-                                <Text style={styles.author}>{this.props.item.author.name}</Text>
-                                <Text style={styles.date}>{moment(this.props.item.note.activityDate).format("DD/MM/YYYY h:mm a")}</Text>
+                                <Text style={styles.author}>{item.author.name}</Text>
+                                <Text style={styles.date}>{moment(item.note.activityDate).format("DD/MM/YYYY h:mm a")}</Text>
                             </View>
                         </View>
                     </View>
@@ -54,7 +64,7 @@ export class ActivityDetailView extends React.Component{
                 <View style={styles.body}>
                     <ScrollView>
                         <HTMLView
-                            value={htmlUnescape(this.props.item.note.content)}
+                            value={htmlUnescape(item.note.content)}
                         />
                     </ScrollView>
                 </View>

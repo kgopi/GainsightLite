@@ -1,9 +1,10 @@
 import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
-import {MainContainer} from './views/MainContainer';
+import {MainContainer} from './views/home/MainContainer';
 import {SignInScreen} from "./views/singin/SignInScreen";
 import EventsManager from "./../EventsManager";
+import {ActivityDetailView} from "./views/timeline/activitydetails/ActivityDetailView";
 
-const AppStack = createStackNavigator({ Home: MainContainer});
+const AppStack = createStackNavigator({ Home: MainContainer, ActivityDetails:ActivityDetailView});
 const AuthStack = createStackNavigator({ SignIn: SignInScreen }, {
     headerMode: 'none'
 });

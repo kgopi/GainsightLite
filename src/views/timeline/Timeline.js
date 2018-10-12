@@ -1,16 +1,26 @@
 import React from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList, StyleSheet, AppState, Platform} from 'react-native';
 import {List} from 'react-native-elements';
 import ActivityView from "./ActivityView";
 import { fetchActivities } from '../../services/Timeline';
-import { ActivityDetailView } from './ActivityDetailView';
+import { ActivityDetailView } from './activitydetails/ActivityDetailView';
 import {handleRefresh, handleLoadMore, loadActivities, updateTimelineState} from "./../../actions/timeline";
 import {connect} from 'react-redux';
+import {notifyMesage} from "../NotificationController";
 
 class Timeline extends React.Component {
 
     componentDidMount() {
         this.loadActivities();
+        AppState.addEventListener('change', this.handleAppStateChange);
+    }
+
+    componentWillUnmount() {
+        AppState.removeEventListener('change', this.handleAppStateChange);
+    }
+
+    handleAppStateChange(){
+        notifyMesage('Title', 'Faasak Faask');
     }
 
     loadActivities = () => {
@@ -28,13 +38,14 @@ class Timeline extends React.Component {
     }
 
     render() {
-        const { activities, isRefreshing, selectedActivity } = this.props;
+        const { activities, isRefreshing, selectedActivity, navigation } = this.props;
+        //debugger;
         if(selectedActivity == null){
             return (
                 <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
-                            renderItem={({item})=>{return (<ActivityView item={item}></ActivityView>)}}
+                            renderItem={({item})=>{return (<ActivityView item={item} navigation={navigation}></ActivityView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
                             onRefresh={()=>{this.props.handleRefresh(); this.loadActivities();}}

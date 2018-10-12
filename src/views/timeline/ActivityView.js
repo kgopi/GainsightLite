@@ -38,7 +38,11 @@ class ActivityView extends React.Component{
                     avatar={
                         getLetterAvatar(this.props.item.author.name)
                     }
-                    onPress={() => {this.props.showDetailView(this.props.item, "Timeline")}}
+                    onPress={() => {
+                        this.props.navigation.navigate('ActivityDetails', {
+                            item:this.props.item
+                        });
+                    }}
                 />
         );
     }

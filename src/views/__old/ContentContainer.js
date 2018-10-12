@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import Timeline from '../views/Timeline/Timeline';
-import { CTAList } from '../views/CTA/CTAList';
+import Timeline from '../timeline/Timeline';
+import { CTAList } from '../calltoaction/CTAList';
 import {StyleSheet, View} from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
-import {onChangeTab} from './../actions/app'; 
+import {onChangeTab} from '../../actions/app';
 import {connect} from 'react-redux';
 
 class ContentContainer extends Component<Props> {
