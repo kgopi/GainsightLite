@@ -3,27 +3,12 @@ import {
     Alert,
     View,
     StyleSheet,
-    AsyncStorage,
-    StatusBar,
-    Platform
-} from 'react-native';
+    StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Auth0 from 'react-native-auth0';
-import {authCredentials} from "../../../app";
 import {onSignedIn} from "../../actions/app";
+import {auth0} from "./webauth";
 
-const auth0 = new Auth0(authCredentials);
-auth0.webAuth.client.authorizeUrl = function(query){
-    return `https://${authCredentials.domain}/v1/ui/timeline/${Platform.OS}?state=${query.state}`;
-};
-auth0.webAuth.client.exchange = function (params) {
-    if(params.code){
-        return Promise.resolve(params);
-    } else {
-        return Promise.reject(`Authorization failed`);
-    }
-};
 
 const styles = StyleSheet.create({
     container: {
@@ -61,10 +46,10 @@ class SignInScreen extends Component {
             .catch(error => {
                 console.log(error);
                 Alert.alert(
-                    'Failed',
-                    `Failed to authenticate ${error}`,
+                    'Failed to authenticate',
+                    `Authentication failed with Gainsight. Please try again. ${(error && error.error_description)||''}`,
                     [{ text: 'RETRY', onPress: () => {
-                            //this._authenticate();
+                            this._authenticate();
                         }}],
                     { cancelable: false }
                 );
