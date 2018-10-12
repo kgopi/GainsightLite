@@ -5,11 +5,12 @@ import {displayName} from "../../../app.json";
 import {HomeToolbar} from "./HomeToolbar";
 import CTAList from "../CTA/CTAList";
 import Timeline from "../activitytimeline/Timeline";
+import {Sally} from "../sally/Sally";
 
 const TabsStack = createMaterialTopTabNavigator({
     "Time Line":Timeline,
-    "CTA":CTAList/*,
-            "CS360":Timeline*/
+    "CTA":CTAList,
+    "Sally": Sally
 }, {
     tabBarPosition:'top',
     swipeEnabled:true,

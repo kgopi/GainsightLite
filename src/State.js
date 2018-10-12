@@ -11,7 +11,8 @@ export const initialState = {
         number: 0
       },
       activities: [],
-      isLoading: false
+      isLoading: false,
+      selfMode: false
     },
     cta: {
       selectedCta: null,

@@ -43,10 +43,11 @@ class TaskView extends React.Component{
                         checked={this.state.IsClosed}
                         style={{backgroundColor: '#eaeaea'}}
                         onPress={() => this.saveTaskStatus()}
+                        containerStyle={this.state.IsClosed ? {"textDecoration": "line-through"} : {}}
                     />
                 </View>
                 <View style={styles.right}>
-                    <Text style={{alignItems: 'center', marginRight: 10}}>{moment(this.props.item.DueDate).format("DD/MM/YYYY h:mm a")}</Text>
+                    <Text style={{top: -10, marginRight: 10}}>{moment(this.props.item.DueDate).format("DD/MM/YYYY")}</Text>
                     {getLetterAvatar(this.props.item.OwnerId__gr.FirstName)}
                 </View>
             </View>
@@ -100,6 +101,7 @@ const styles = StyleSheet.create({
     },
     listItem: {
         display: 'flex',
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: 'center'
     }
   });
