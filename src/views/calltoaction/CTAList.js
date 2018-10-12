@@ -1,90 +1,70 @@
 import React from 'react';
-import {FlatList, StyleSheet, Text} from 'react-native';
+import {FlatList, StyleSheet} from 'react-native';
 import {List} from 'react-native-elements';
+import { fetchCTAs } from '../../services/CTA';
+import {updateCTAState, handleLoadMore, loadCtas} from "./../../actions/cta";
+import {connect} from 'react-redux';
+import CTAView from './CTAView';
+import { CtaDetailView } from './CtaDetailView';
 
-export class CTAList extends React.Component {
-
-    state = {
-        seed: 1,
-        page: 1,
-        activities: [],
-        selectedActivity: null,
-        isLoading: false,
-        isRefreshing: false,
-    };
-
-    handleRefresh = () => {
-        this.setState({
-            seed: this.state.seed + 1,
-            isRefreshing: true,
-        }, () => {
-            this.loadActivities();
-        });
-    };
-
-    handleLoadMore = () => {
-        this.setState({
-            page: this.state.page + 1
-        }, () => {
-            this.loadActivities();
-        });
-    };
+class CTAList extends React.Component {
 
     componentDidMount() {
-        this.loadActivities();
-    };
+        this.loadCtas();
+    }
 
-    loadActivities = () => {
-        const { activities, seed, page } = this.state;
-        this.setState({ isLoading: true });
+    loadCtas = () => {
+        const {ctas} = this.props;
 
-        fetch(`https://randomuser.me/api/?seed=${seed}&page=${page}&results=20`)
-            .then(res => res.json())
-            .then(res => {
-                this.setState({
-                    activities: page === 1 ? res.results : [...activities, ...res.results],
-                    isRefreshing: false,
-                });
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        console.log("CTAs loading");
+        fetchCTAs().then(res => {
+            let data = res.data;
+            this.props.loadCtas(ctas.length === 0 ? data.ctas : [...ctas, ...data.ctas], false);
+        });
     }
 
     render() {
-        const { activities, isRefreshing, selectedActivity } = this.state;
-        if(selectedActivity == null){
+        const { ctas, isRefreshing, selectedCta } = this.props;
+        if(selectedCta == null){
             return (
-                <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
+                <List style={{flex: 1, backgroundColor: 'green'}} contentContainerStyle={{flex: 1}} containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
-                            data={activities}
-                            renderItem={({item})=>{return (<Text>{"Me"}</Text>)}}
+                            data={ctas}
+                            renderItem={({item})=>{return (<CTAView item={item}></CTAView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
-                            onRefresh={this.handleRefresh}
-                            onEndReached={this.handleLoadMore}
-                            onEndThreshold={0}
+                            onRefresh={()=>{this.props.resetState(); this.loadCtas();}}
+                            onEndThreshold={0.1}
                         />
                 </List>
             );
         }else{
             return (
-                <view></view>
+                <CtaDetailView item={this.props.selectedCta}></CtaDetailView>
             );
         }
     }
 }
 
-const style = StyleSheet.create({
-    activity: {
-        width: '100%',
-        backgroundColor: '#333',
-        marginBottom: 10,
-        paddingLeft: 25,
-    },
-    activityName: {
-        fontSize: 17,
-        paddingVertical: 20,
-        color: '#fff'
+const mapStateToProps = state => {
+    return {
+        ctas: state.app.cta.ctas,
+        selectedCta: state.app.cta.selectedCta,
+        isLoading: state.app.cta.isLoading,
+        isRefreshing: state.app.cta.isRefreshing,
+        searchText: state.app.searchText
     }
-});
+  }
+  
+  const mapDispatchersToProps = dispatch => {
+    return {
+        loadCtas: (ctas, isRefreshing) => {
+            dispatch(loadCtas(ctas, isRefreshing));
+        },
+        resetState: () => {
+            dispatch(updateCTAState({ctas: [], selectedCta: null, isRefreshing: true}));
+        }
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchersToProps)(CTAList);

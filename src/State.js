@@ -14,6 +14,9 @@ export const initialState = {
       isLoading: false
     },
     cta: {
-      selectedCta: null
+      selectedCta: null,
+      ctas: [],
+      isLoading: false,
+      isRefreshing: false
     }
 }

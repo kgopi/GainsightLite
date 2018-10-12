@@ -72,7 +72,7 @@ class EventsManager {
             socket.on('connectAbort', (eve) => {
                 console.log("Connection aborted, retrying the connection", eve);
                 getAuthToken().done((res)=>{
-					options.query.id = res.data.token;
+					options.query.id = res.token;
 				});
             });
 

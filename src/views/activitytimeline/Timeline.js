@@ -42,7 +42,7 @@ class Timeline extends React.Component {
         //debugger;
         if(selectedActivity == null){
             return (
-                <List containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
+                <List style={{flex: 1, backgroundColor: 'green'}} contentContainerStyle= {{flex: 1}} containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
                             renderItem={({item})=>{return (<ActivityView item={item} navigation={navigation}></ActivityView>)}}
@@ -50,7 +50,7 @@ class Timeline extends React.Component {
                             refreshing={isRefreshing}
                             onRefresh={()=>{this.props.handleRefresh(); this.loadActivities();}}
                             onEndReached={()=>{this.loadActivities();}}
-                            onEndThreshold={0}
+                            onEndThreshold={0.1}
                         />
                 </List>
             );
