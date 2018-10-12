@@ -14,16 +14,16 @@ class Timeline extends React.Component {
     }
 
     loadActivities = () => {
-        const {activities, links, page} = this.props;
+        const {activities, links, page, searchText} = this.props;
 
         if(links.next == null && page.number > 0){
             return; // No more activities
         }
 
-        fetchActivities({links, page}).then(res => {
+        fetchActivities({links, page, searchText}).then(res => {
             let data = res.data;
             this.props.updateTimelineState({links: data.links, page: data.page});
-            this.props.loadActivities(page.number === 1 ? data.content : [...activities, ...data.content], false);
+            this.props.loadActivities(page.number === 0 ? data.content : [...activities, ...data.content], false);
         });
     }
 
@@ -72,7 +72,8 @@ const mapStateToProps = state => {
         activities: state.app.timeline.activities,
         selectedActivity: state.app.timeline.selectedActivity,
         isLoading: state.app.timeline.isLoading,
-        isRefreshing: state.app.timeline.isRefreshing
+        isRefreshing: state.app.timeline.isRefreshing,
+        searchText: state.app.searchText
     }
   }
   

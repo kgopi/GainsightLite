@@ -2,6 +2,7 @@ export const initialState = {
     title: "Gainsight Lite",
     isDetailView: false,
     selectedTab: 0,
+    searchText: "",
     timeline: {
       selectedActivity: null,
       isRefreshing: false,
