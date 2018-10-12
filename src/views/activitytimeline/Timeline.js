@@ -7,6 +7,7 @@ import { ActivityDetailView } from './activitydetails/ActivityDetailView';
 import {handleRefresh, handleLoadMore, loadActivities, updateTimelineState} from "./../../actions/timeline";
 import {connect} from 'react-redux';
 import {notifyMesage} from "../NotificationController";
+import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 
 class Timeline extends React.Component {
 
@@ -35,17 +36,19 @@ class Timeline extends React.Component {
         if(selectedActivity == null){
             return (
                 <View>
-                    <Text>{"Show mine"}</Text>
-                    <Switch
-                            onValueChange = {(isOn) => {
-                                this.props.handleRefresh();
-                                this.props.updateToggleMode(isOn);
-                                setTimeout(()=>{
-                                    this.loadActivities();
-                                }, 0);
-                            }}
-                            value = {this.props.selfMode}
-                    />
+                    <View style={{backgroundColor: COLOR.grey50, paddingTop: 5, paddingBottom: 5, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                        <Text style={{top: 4, fontSize: 14, fontWeight: 'bold'}}>{"Show mine"}</Text>
+                        <Switch
+                                onValueChange = {(isOn) => {
+                                    this.props.handleRefresh();
+                                    this.props.updateToggleMode(isOn);
+                                    setTimeout(()=>{
+                                        this.loadActivities();
+                                    }, 0);
+                                }}
+                                value = {this.props.selfMode}
+                        />
+                    </View>
                     <List style={{flex: 1, backgroundColor: 'green'}} contentContainerStyle= {{flex: 1}} containerStyle={{ marginTop: 0, borderTopWidth: 0, borderBottomWidth: 0 }}>
                         <FlatList
                             data={activities}
