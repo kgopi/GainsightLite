@@ -1,7 +1,5 @@
 
-import {
-    notify
-} from './src/services/NotifService';
+import {notifyMesage} from "./src/views/NotificationController";
 import {
     Alert
 } from 'react-native';
@@ -22,10 +20,10 @@ class EventsManager {
             title = `${data.userName} posted a new Activity..`
             message = `${data.data.subject}`;
         }else{
-            title = "How are you man";
+            title = "I am the Kalkhi";
             message = "How are you man";
         }
-        notify(title, message);
+        notifyMesage(title, message, data);
     }
 
     initWebSocketConnection() {
@@ -73,7 +71,7 @@ class EventsManager {
 
             socket.on('connectAbort', (eve) => {
                 console.log("Connection aborted, retrying the connection", eve);
-                this.getAuthToken().done((res)=>{
+                getAuthToken().done((res)=>{
 					options.query.id = res.data.token;
 				});
             });
