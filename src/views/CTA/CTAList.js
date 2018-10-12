@@ -2,9 +2,9 @@ import React from 'react';
 import {FlatList, StyleSheet} from 'react-native';
 import {List} from 'react-native-elements';
 import { fetchCTAs } from '../../services/CTA';
-import {updateCTAState, handleLoadMore, loadCtas} from "./../../actions/cta";
+import {updateCTAState, handleLoadMore, loadCtas} from "../../actions/cta";
 import {connect} from 'react-redux';
-import CTAView from './CTAView';
+import CTAView from './../../views/CTA/CTAView';
 import { CtaDetailView } from './CtaDetailView';
 
 class CTAList extends React.Component {

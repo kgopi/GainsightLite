@@ -2,7 +2,7 @@ export const GATEWAY_URL ="https://abstract-gong360.develgs.com";
 
 export const TIMELINE_URL = GATEWAY_URL + "/v1/ant/timeline";
 
-export const CTA_URL = GATEWAY_URL + "/v1/cockpit/cta";
+export const CTA_URL = GATEWAY_URL + "/v1/cockpit";
 
 export function getHeaders(){
     return {

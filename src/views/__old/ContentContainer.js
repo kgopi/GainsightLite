@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Timeline from '../activitytimeline/Timeline';
-import { CTAList } from '../calltoaction/CTAList';
+import CTAList from '../CTA/CTAList';
 import {StyleSheet, View} from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import {onChangeTab} from '../../actions/app';

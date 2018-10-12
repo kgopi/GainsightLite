@@ -1,4 +1,5 @@
-import { HANDLE_LOAD_MORE, HANDLE_REFRESH, LOAD_ACTIVITIES, SHOW_DETAIL_VIEW, GO_HOME, UPDATE_TIMELINE_DATA } from './types';
+import { HANDLE_LOAD_MORE, HANDLE_REFRESH, LOAD_ACTIVITIES, SHOW_DETAIL_VIEW, 
+  GO_HOME, UPDATE_TIMELINE_DATA } from './types';
 
 export const handleRefresh = (seed) => {
   return {
@@ -52,11 +53,5 @@ export const showDetailView = (item, title) => {
         selectedActivity: item
       }
     }
-  }
-}
-
-export const goToHome = () => {
-  return {
-    type: GO_HOME
   }
 }

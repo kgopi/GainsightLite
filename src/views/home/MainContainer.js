@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {createMaterialTopTabNavigator} from "react-navigation";
 import {displayName} from "../../../app.json";
 import {HomeToolbar} from "./HomeToolbar";
-import {CTAList} from "../calltoaction/CTAList";
+import CTAList from "../CTA/CTAList";
 import Timeline from "../activitytimeline/Timeline";
 
 const TabsStack = createMaterialTopTabNavigator({

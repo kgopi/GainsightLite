@@ -4,6 +4,7 @@ import { Avatar } from "react-native-elements";
 import HTMLView from 'react-native-htmlview';
 import {getLetterAvatar} from '../../../utilities/LetterAvatar';
 import {ActivityDetailViewToolbar} from "./ActivityDetailViewToolbar";
+import TasksList from '././../TaskList';
 
 const moment = require('moment');
 const ContextLabelMapper: any = {};
@@ -57,6 +58,7 @@ export class ActivityDetailView extends React.Component{
                 </View>
                 <ScrollView style={styles.body}>
                     <HTMLView value={htmlUnescape(item.note.content)}/>
+                    <TasksList ctaId={item.meta.ctaId} activityId={item.id}></TasksList>
                 </ScrollView>
             </View>
         );
