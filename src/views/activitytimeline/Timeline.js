@@ -1,7 +1,7 @@
 import React from 'react';
 import {FlatList, StyleSheet, AppState, Platform, View, Switch, Text, ActivityIndicator} from 'react-native';
 import ActivityView from "./ActivityView";
-import { fetchActivities } from '../../services/Timeline';
+import {fetchActivities, fetchNextActivities} from '../../services/Timeline';
 import {handleRefresh, handleLoadMore, loadActivities, updateTimelineState} from "./../../actions/timeline";
 import {connect} from 'react-redux';
 import { COLOR} from 'react-native-material-ui';
@@ -12,23 +12,32 @@ class Timeline extends React.Component {
         this.loadActivities();
     }
 
-    loadActivities = () => {
-        const {activities, links, page, searchText, selfMode} = this.props;
-
-        if((!links.next||!links.next.href) && activities.length>0){
-            return; // No more activities
-        }
-
-        console.log('Load activities');
+    loadActivities = (upsert=false) => {
+        const {searchText, selfMode} = this.props;
         let userId = `(uid#${this.props.userId})`;
         let query = selfMode ? `${encodeURIComponent(userId)}` : '';
         this.props.updateTimelineState({isLoading:true});
-        fetchActivities({links, page, searchText, query, activities}).then(res => {
+        fetchActivities({searchText, query}).then(res => {
             this.props.updateTimelineState({isLoading:false});
             let data = res && res.data;
             if(!data) return;
             this.props.updateTimelineState({links: data.links, page: data.page});
-            this.props.loadActivities(page.number === 0 ? data.content : [...activities, ...data.content], false);
+            this.props.loadActivities(data.content,false);
+        });
+    };
+
+    loadMore = ()=>{
+        const {activities, links} = this.props;
+        if((!links.next||!links.next.href) && activities.length>0){
+            return; // No more activities
+        }
+        this.props.updateTimelineState({isLoading:true});
+        fetchNextActivities(links.next.href).then(res => {
+            this.props.updateTimelineState({isLoading:false});
+            let data = res && res.data;
+            if(!data) return;
+            this.props.updateTimelineState({links: data.links, page: data.page});
+            this.props.loadActivities([...activities, ...data.content],false);
         });
     };
 
@@ -43,11 +52,8 @@ class Timeline extends React.Component {
                         <Text style={{top: 4, fontSize: 14, fontWeight: 'bold'}}>{"Show mine"}</Text>
                         <Switch
                                 onValueChange = {(isOn) => {
-                                    this.props.handleRefresh();
-                                    this.props.updateToggleMode(isOn);
-                                    setTimeout(()=>{
-                                        this.loadActivities();
-                                    }, 0);
+                                    this.props.updateTimelineState({links: {next: null}, page: {number:0}, selfMode: isOn, isRefreshing:false});
+                                    this.loadActivities();
                                 }}
                                 value = {this.props.selfMode}
                         />
@@ -60,13 +66,13 @@ class Timeline extends React.Component {
                             refreshing={isRefreshing}
                             onRefresh={()=>{
                                 this.props.handleRefresh();
-                                this.loadActivities(true);
+                                this.loadActivities();
                             }}
                             onEndReached={(info)=>{
                                 console.log(info, this.props.isLoading);
                                 if(!this.props.isLoading){
                                     console.log("loading activities");
-                                    this.loadActivities();
+                                    this.loadMore();
                                 }
                             }}
                             onEndReachedThreshold={0.1}
@@ -115,16 +121,13 @@ const mapStateToProps = state => {
   const mapDispatchersToProps = dispatch => {
     return {
         handleRefresh: () => {
-            dispatch(updateTimelineState({links: {next: null}, page: {number:0}, selfMode: false, isRefreshing:true}));
+            dispatch(updateTimelineState({links: {next: null}, page: {number:0}, isRefreshing:true}));
         },
         loadActivities: (activities, isRefreshing) => {
             dispatch(loadActivities(activities, isRefreshing));
         },
         updateTimelineState: (payload) => {
             dispatch(updateTimelineState(payload));
-        },
-        updateToggleMode: (selfMode)=>{
-            dispatch(updateTimelineState({selfMode}));
         }
     }
   }
