@@ -9,7 +9,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import {onSignedIn, onSignedInprogress, onUserInfoLoaded} from "../../actions/app";
 import {auth0} from "./webauth";
 import {fetchBootstrap} from "../../services/GSBootstrap";
-
+import EventsManager from '../../../EventsManager';
 
 const styles = StyleSheet.create({
     container: {
@@ -57,6 +57,7 @@ class SignInScreen extends Component {
                 this.props.toggleLoader(false);
                 this.props.handleBootstrap(res.data);
                 this.props.navigation.navigate('Home');
+                EventsManager.initWebSocketConnection();
             }
         }).catch(()=>{
             this._onUserDetailsFailed();

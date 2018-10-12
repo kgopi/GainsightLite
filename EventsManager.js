@@ -1,4 +1,3 @@
-
 import {notifyMesage} from "./src/views/NotificationController";
 import {
     Alert
@@ -7,12 +6,9 @@ import {
     getAuthToken
 } from './src/services/Timeline';
 const SocketClient = require("socketcluster-client").create;
+import store from './src/Store';
 
-class EventsManager {
-
-    constructor() {
-        this.initWebSocketConnection();
-    }
+class EventsManager{
 
     notify(data){
         var title, message;
@@ -55,11 +51,17 @@ class EventsManager {
             const socket = SocketClient(options); // Initiate the connection to the server
             socket.on('connect', () => {
                 console.log('WebSocket connection is successful ...');
-                var userChannel = socket.subscribe(`broadcast/e835971d-c3b0-461b-85aa-c079f0bb051a/1P01XB2BOT21HRIIZB3P6WRDB28LGVKHWV75`);
+
+                let state = store.getState();
+                debugger;
+                let userId = state.app.GS.user.id;
+                let tenantId = state.app.GS.instance.id;
+
+                var userChannel = socket.subscribe(`broadcast/${tenantId}/${userId}`);
                 userChannel.watch((data) => {
                     this.notify(data);
                 });
-                var tenantChannel = socket.subscribe(`broadcast/e835971d-c3b0-461b-85aa-c079f0bb051a`);
+                var tenantChannel = socket.subscribe(`broadcast/${tenantId}`);
                 tenantChannel.watch((data) => {
                     this.notify(data);
                 });

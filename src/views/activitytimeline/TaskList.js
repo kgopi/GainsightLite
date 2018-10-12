@@ -43,7 +43,6 @@ class TaskView extends React.Component{
                         checked={this.state.IsClosed}
                         style={{backgroundColor: '#eaeaea'}}
                         onPress={() => this.saveTaskStatus()}
-                        containerStyle={this.state.IsClosed ? {"textDecoration": "line-through"} : {}}
                     />
                 </View>
                 <View style={styles.right}>

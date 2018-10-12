@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {createMaterialTopTabNavigator} from "react-navigation";
 import {displayName} from "../../../app.json";
-import {HomeToolbar} from "./HomeToolbar";
+import HomeToolbar from "./HomeToolbar";
 import CTAList from "../CTA/CTAList";
 import Timeline from "../activitytimeline/Timeline";
 import {Sally} from "../sally/Sally";
