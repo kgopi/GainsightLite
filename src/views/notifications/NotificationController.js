@@ -4,16 +4,39 @@ import PushNotification from "react-native-push-notification";
 
 let appCurrentVisualState;
 
-export function notifyMesage(title, message, data={}){
-    if (appCurrentVisualState === 'background') {
-        PushNotification.localNotification({
-            title,
-            message,
-            data:JSON.stringify(data)
-        });
-    } else {
+function generateNotification(notificationObject) {
+    //if (appCurrentVisualState === 'background') {
+        PushNotification.localNotification(notificationObject);
+    /*} else {
+        console.log(notificationObject);
         //Alert.alert(title, message);
         console.log(`Show in app notification`);
+    }*/
+}
+
+function getJONotification(websocketMessge) {
+    switch (websocketMessge.command){
+        case 'UPDATE_DETAILS':{
+            let {data, userName} = websocketMessge;
+            let title = `Journey Program Updated`;
+            let message = `Program '${data.joName}' updated by '${userName}'`;
+            let extraDate = JSON.stringify(websocketMessge);
+            return {title, message, extraDate};
+        }
+        break;
+    }
+}
+
+export function createNotification(websocketMessge) {
+    let notificationObject;
+    switch (websocketMessge.area){
+        case 'JOURNEY_PROGRAM':
+            notificationObject = getJONotification(websocketMessge);
+            break;
+    }
+
+    if(notificationObject){
+        generateNotification(notificationObject);
     }
 }
 

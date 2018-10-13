@@ -1,7 +1,4 @@
-import {notifyMesage} from "./src/views/NotificationController";
-import {
-    Alert
-} from 'react-native';
+import {createNotification} from "./src/views/notifications/NotificationController";
 import {
     getAuthToken
 } from './src/services/Timeline';
@@ -10,7 +7,7 @@ import store from './src/Store';
 
 class EventsManager{
 
-    notify(data){
+    /*notify(data){
         var title, message;
         if(data.area == "ANT"){
             title = `${data.userName} posted a new Activity..`
@@ -20,7 +17,7 @@ class EventsManager{
             message = "How are you man";
         }
         notifyMesage(title, message, data);
-    }
+    }*/
 
     initWebSocketConnection() {
 
@@ -59,12 +56,12 @@ class EventsManager{
                 var userChannel = socket.subscribe(`broadcast/${tenantId}/${userId}`);
                 console.log(`Subscribed to broadcast/${tenantId}/${userId}`);
                 userChannel.watch((data) => {
-                    this.notify(data);
+                    createNotification(data);
                 });
                 var tenantChannel = socket.subscribe(`broadcast/${tenantId}`);
                 console.log(`Subscribed to broadcast/${tenantId}`);
                 tenantChannel.watch((data) => {
-                    this.notify(data);
+                    createNotification(data);
                 });
             });
 
