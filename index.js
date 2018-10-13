@@ -23,7 +23,7 @@ if (window.__FETCH_SUPPORT__) {
     : global.FileReader
 }
 
-import React from 'react';
+import React,{Component} from 'react';
 import {AppRegistry, Platform} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
@@ -51,13 +51,14 @@ const uiTheme = {
     }
 };
 
-const RNRedux = () => (
-  <Provider store = { store }>
-      <ThemeContext.Provider value={getTheme(uiTheme)}>
-          <App />
-          <PushNotificationControl/>
-      </ThemeContext.Provider>
-  </Provider>
-)
+let RNReduxCompoent = ()=>{
 
-AppRegistry.registerComponent(appName, () => RNRedux);
+        return (<Provider store = { store }>
+            <ThemeContext.Provider value={getTheme(uiTheme)}>
+                <App />
+                <PushNotificationControl/>
+            </ThemeContext.Provider>
+        </Provider>)
+};
+
+AppRegistry.registerComponent(appName, () => RNReduxCompoent);

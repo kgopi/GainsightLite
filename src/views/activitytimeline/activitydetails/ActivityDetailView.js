@@ -1,9 +1,11 @@
 import React from "react";
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {StyleSheet, View, Text, ScrollView, Alert, ActivityIndicator} from 'react-native';
 import HTMLView from 'react-native-htmlview';
 import {getLetterAvatar} from '../../../utilities/LetterAvatar';
 import {ActivityDetailViewToolbar} from "./ActivityDetailViewToolbar";
 import TasksList from '././../TaskList';
+import {COLOR} from "react-native-material-ui";
+import {getActivityById} from "../../../services/Timeline";
 
 const moment = require('moment');
 const ContextLabelMapper: any = {};
@@ -27,10 +29,63 @@ function htmlUnescape(replaceStr:string):string{
 }
 
 export class ActivityDetailView extends React.Component{
+
+
+    constructor(props) {
+        super(props);
+        const { navigation } = this.props;
+        const item = navigation.getParam('item');
+        const itemId = navigation.getParam('itemId');
+        const shouldLoadDetails = navigation.getParam('shouldLoadDetails');
+        if(shouldLoadDetails && itemId){
+            this.state = {isLoading:true, itemId};
+        } else if (item){
+            this.state = {item};
+        } else{
+            this.state = {error:true};
+        }
+    }
+
+    _onMissingDetails(){
+        this.setState({item:null, isLoading:false, error:true});
+        Alert.alert(
+            'Error',
+            `Failed to get activity details`,
+            [{ text: 'OK', onPress: () => {
+                    this.props.navigation.pop();
+                }}],
+            { cancelable: false }
+        );
+    }
+
+    componentDidMount(){
+        const {isLoading, error, itemId} = this.state;
+
+        if(error){
+            this._onMissingDetails();
+        } else if(isLoading){
+            getActivityById(itemId).then(({data})=>{
+                if(data){
+                    this.setState({item:data, isLoading:false, error:false});
+                } else {
+                    this._onMissingDetails();
+                }
+            }).catch(()=>{
+                this._onMissingDetails();
+            })
+        }
+    }
+
     render(){
         const { navigation } = this.props;
-        const item = navigation.getParam('item', {});
-        let contextObj = item.contexts[item.contexts.length-1];
+        const {item, isLoading, error} = this.state;
+
+        if(error){
+            return null;
+        } else if(isLoading){
+            return <ActivityIndicator size="large" color={COLOR.blue800} />;
+        }
+
         return (
             <View style={{flex:1}}>
                 <ActivityDetailViewToolbar navigation={navigation} item={item} />

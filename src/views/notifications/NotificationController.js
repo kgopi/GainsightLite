@@ -3,6 +3,7 @@ import {AppState, Alert} from "react-native";
 import PushNotification from "react-native-push-notification";
 
 let appCurrentVisualState;
+let globalNavigator;
 
 function generateNotification(notificationObject) {
     //if (appCurrentVisualState === 'background') {
@@ -14,6 +15,25 @@ function generateNotification(notificationObject) {
     }*/
 }
 
+function getANTNotification(websocketMessge) {
+    switch (websocketMessge.command){
+        case 'ACTIVITY_INSERT':{
+            let {data, userName} = websocketMessge;
+            let title = `New Activity Logged`;
+            let message = `Activity '${data.subject}' Logged by '${userName}'`;
+            let extraDate = JSON.stringify(websocketMessge);
+            return {title, message, data:extraDate};
+        }
+        case 'ACTIVITY_UPDATE':{
+            let {data, userName} = websocketMessge;
+            let title = `Activity Updated`;
+            let message = `Activity '${data.subject}' updated by '${userName}'`;
+            let extraDate = JSON.stringify(websocketMessge);
+            return {title, message, data:extraDate};
+        }
+    }
+}
+
 function getJONotification(websocketMessge) {
     switch (websocketMessge.command){
         case 'UPDATE_DETAILS':{
@@ -21,15 +41,25 @@ function getJONotification(websocketMessge) {
             let title = `Journey Program Updated`;
             let message = `Program '${data.joName}' updated by '${userName}'`;
             let extraDate = JSON.stringify(websocketMessge);
-            return {title, message, extraDate};
+            return {title, message, data:extraDate};
         }
-        break;
+        case 'UPDATE_STATUS':{
+            let {data, userName} = websocketMessge;
+            let title = `Journey Program Status Changed`;
+            let message = `Program '${data.joName}' status changed to '${data.newStatus}' by '${userName}'`;
+            let extraDate = JSON.stringify(websocketMessge);
+            return {title, message, data:extraDate};
+        }
     }
 }
 
 export function createNotification(websocketMessge) {
+    console.log(websocketMessge);
     let notificationObject;
     switch (websocketMessge.area){
+        case 'ANT':
+            notificationObject = getANTNotification(websocketMessge);
+            break;
         case 'JOURNEY_PROGRAM':
             notificationObject = getJONotification(websocketMessge);
             break;
@@ -37,6 +67,28 @@ export function createNotification(websocketMessge) {
 
     if(notificationObject){
         generateNotification(notificationObject);
+    }
+}
+
+export function setNavigation(navigator) {
+    globalNavigator = navigator;
+}
+
+function handleNotificationIntegraction({data}) {
+    switch (data.area){
+        case 'ANT':{
+
+            switch (data.command){
+                case 'ACTIVITY_INSERT':
+                case 'ACTIVITY_UPDATE':
+                    globalNavigator && globalNavigator.navigate('ActivityDetails', {
+                        itemId: data.data.id,
+                        shouldLoadDetails:true
+                    });
+                    break;
+            }
+
+        }
     }
 }
 
@@ -56,8 +108,11 @@ export class PushNotificationControl extends Component{
     configureNotificationService(){
         console.log('Configure notification service');
         PushNotification.configure({
-            onNotification: function(notification) {
-                console.log( 'NOTIFICATION:', notification );
+            onNotification: (notification) => {
+                console.log( 'NOTIFICATION:', notification);
+                if(notification.userInteraction){
+                    handleNotificationIntegraction(notification);
+                }
             },
             permissions: {
                 alert: true,

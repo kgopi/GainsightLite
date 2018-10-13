@@ -6,6 +6,7 @@ import HomeToolbar from "./HomeToolbar";
 import CTAList from "../CTA/CTAList";
 import Timeline from "../activitytimeline/Timeline";
 import Sally from "../sally/Sally";
+import {setNavigation} from "../notifications/NotificationController";
 
 const TabsStack = createMaterialTopTabNavigator({
     "Time Line":Timeline,
@@ -28,6 +29,10 @@ const TabsStack = createMaterialTopTabNavigator({
 export class MainContainer extends Component {
 
     static router = TabsStack.router;
+
+    componentDidMount(){
+        setNavigation(this.props.navigation);
+    }
 
     render() {
       return (

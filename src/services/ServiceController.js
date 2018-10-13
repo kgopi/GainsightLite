@@ -4,6 +4,8 @@ export const GATEWAY_URL ="https://abstract-gong360.develgs.com";
 
 export const TIMELINE_URL = GATEWAY_URL + "/v1/ant/timeline";
 
+export const ACTIVITY_URL = GATEWAY_URL + "/v1/ant/activity";
+
 export const CTA_URL = GATEWAY_URL + "/v1/cockpit";
 
 export const GS_BOOTSTRAP = `${GATEWAY_URL}/v1.0/api/gnative/bootstrap`;

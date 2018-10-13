@@ -1,4 +1,4 @@
-import {TIMELINE_URL, getHeaders, GATEWAY_URL} from './ServiceController';
+import {TIMELINE_URL, getHeaders, GATEWAY_URL, ACTIVITY_URL} from './ServiceController';
 
 export function fetchActivities({searchText="", query=""}){
     let url = TIMELINE_URL + `/search/activity/?to=4096788558000&t=${searchText}&page=0&size=20&q=${query}`;
@@ -37,6 +37,14 @@ export function fetchNextActivities(nextUrl){
 
 export function getAuthToken(){
     return fetch(GATEWAY_URL + `/v1/messenger/token?mobile`,{method: 'GET',headers: getHeaders()})
+        .then(res => res.json())
+        .catch(err => {
+            console.error(err);
+        });
+}
+
+export function getActivityById(id) {
+    return fetch(`${ACTIVITY_URL}/${id}`,{method: 'GET',headers: getHeaders()})
         .then(res => res.json())
         .catch(err => {
             console.error(err);
