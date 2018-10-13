@@ -4,8 +4,7 @@ import {displayName} from "../../../../app.json";
 
 export class ActivityDetailViewToolbar extends Component{
     render(){
-        const {routeparams } = this.props;
-        const item = routeparams.item||{};
+        const {item } = this.props;
         let contextName = item.contexts[item.contexts.length-1].lbl;
 
         return <Toolbar

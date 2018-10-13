@@ -8,6 +8,9 @@ class HomeToolbar extends Component{
     render(){
         return <Toolbar
             leftElement="menu"
+            onLeftElementPress={()=>{
+                this.props.navigation.openDrawer();
+            }}
             centerElement={displayName}
             searchable={{
                 autoFocus: true,

@@ -1,12 +1,31 @@
-import { createSwitchNavigator, createStackNavigator } from 'react-navigation';
+import { createSwitchNavigator, createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import {MainContainer} from './views/home/MainContainer';
 import SignInScreen from "./views/singin/SignInScreen";
 import {ActivityDetailView} from "./views/activitytimeline/activitydetails/ActivityDetailView";
 import { NotificationsView } from './views/NotificationsView';
+import DrawerMenu from "./views/drawer/drawer";
+
+const UserHomeScreen = createDrawerNavigator({
+    HomeScreen: MainContainer
+},{
+    contentComponent: DrawerMenu,
+    contentOptions: {
+        activeTintColor: '#e91e63',
+        style: {
+            flex: 1,
+            paddingTop: 15,
+        }
+    },
+    headerMode: 'none'
+});
 
 const AppStack = createStackNavigator(
     {
-        Home: MainContainer, ActivityDetails:ActivityDetailView, NotificationsView:NotificationsView
+        Home: UserHomeScreen,
+        ActivityDetails:ActivityDetailView,
+        NotificationsView:NotificationsView
+    }, {
+        headerMode: 'none'
     });
 const AuthStack = createStackNavigator({ SignIn: SignInScreen }, {
     headerMode: 'none'

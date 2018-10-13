@@ -24,7 +24,7 @@ if (window.__FETCH_SUPPORT__) {
 }
 
 import React from 'react';
-import {AppRegistry} from 'react-native';
+import {AppRegistry, Platform} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
 import store from './src/Store';
@@ -35,13 +35,20 @@ import {PushNotificationControl} from "./src/views/NotificationController";
 // you can set your style right here, it'll be propagated to application
 const uiTheme = {
     palette: {
+
         primaryColor: COLOR.blue800,
     },
     toolbar: {
         container: {
-            height: 50,
-        },
+            height: Platform.OS==="ios"?50:70,
+            paddingTop: Platform.OS==="ios"?0:20,
+        }
     },
+    drawerHeader:{
+        contentContainer:{
+            backgroundColor: COLOR.grey500
+        }
+    }
 };
 
 const RNRedux = () => (
