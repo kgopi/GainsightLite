@@ -15,6 +15,8 @@ const TabsStack = createMaterialTopTabNavigator({
     tabBarPosition:'top',
     swipeEnabled:true,
     initialRouteName:"Time Line",
+    lazy:true,
+    optimizationsEnabled:true,
     tabBarOptions: {
         labelStyle: {
             fontSize: 14,

@@ -28,7 +28,7 @@ class CTAList extends React.Component {
     render() {
         const { ctas, isRefreshing, selectedCta, isLoading} = this.props;
         let progress = isLoading?<ActivityIndicator size="large" color="#0000ff" />:null;
-        if(ctas.length == 0 && isRefreshing){
+        if(ctas.length == 0 && (isRefreshing||isLoading)){
             return <ActivityIndicator size="large" color="#0000ff" />;
         } else  if(ctas.length == 0){
             return (
@@ -42,7 +42,6 @@ class CTAList extends React.Component {
                     <Text>
                         {"No CTA's found.."}
                     </Text>
-                    {progress}
                 </View>
             );
         }else{
