@@ -41,10 +41,15 @@ class Timeline extends React.Component {
         });
     };
 
+    _renderListItem = ({item})=>{
+        const {navigation} = this.props;
+        return (<ActivityView item={item} navigation={navigation}></ActivityView>);
+    };
+
     render() {
         const { activities, isRefreshing, navigation,isLoading } = this.props;
 
-            let progress = isLoading?<ActivityIndicator size="large" color="#0000ff" />:null;
+            let progress = !isRefreshing && isLoading?<ActivityIndicator size="large" color={COLOR.blue800} />:null;
 
             return (
                 <View style={styles.listcntr}>
@@ -61,8 +66,8 @@ class Timeline extends React.Component {
                     <View style={{flex: 1}}>
                         <FlatList
                             data={activities}
-                            renderItem={({item})=>{return (<ActivityView item={item} navigation={navigation}></ActivityView>)}}
-                            keyExtractor={(item, index) => index+""}
+                            renderItem={this._renderListItem}
+                            keyExtractor={(item, index) => item.id}
                             refreshing={isRefreshing}
                             onRefresh={()=>{
                                 this.props.handleRefresh();
@@ -70,7 +75,7 @@ class Timeline extends React.Component {
                             }}
                             onEndReached={(info)=>{
                                 console.log(info, this.props.isLoading);
-                                if(!this.props.isLoading){
+                                if(info && info.distanceFromEnd>0 && !this.props.isLoading){
                                     console.log("loading activities");
                                     this.loadMore();
                                 }
