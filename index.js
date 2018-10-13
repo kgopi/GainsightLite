@@ -40,8 +40,8 @@ const uiTheme = {
     },
     toolbar: {
         container: {
-            height: Platform.OS==="ios"?50:70,
-            paddingTop: Platform.OS==="ios"?0:20,
+            height:Platform.OS==="ios"?60:70,
+            paddingTop: Platform.OS==="ios"?10:20
         }
     },
     drawerHeader:{

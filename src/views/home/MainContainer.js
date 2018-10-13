@@ -31,9 +31,9 @@ export class MainContainer extends Component {
 
     render() {
       return (
-        <View style={{flex:1}}>
+        <View style={styles.mainContainer}>
             <HomeToolbar navigation={this.props.navigation}/>
-            <View style={styles.mainContainer}>
+            <View style={{flex:1}}>
                 <TabsStack navigation={this.props.navigation}/>
             </View>
         </View>
