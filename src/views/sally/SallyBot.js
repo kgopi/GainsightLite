@@ -75,6 +75,7 @@ export class SallyBot extends React.Component {
         return {
             _id: Date.now(),
             text: m.conversation.label,
+            helperText: m,
             createdAt: m.time,
             user: {
               _id: 'bot',
