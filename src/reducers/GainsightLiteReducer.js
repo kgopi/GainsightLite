@@ -12,7 +12,8 @@ import {
     UPDATE_CTA_DATA,
     LOAD_CTAS,
     USER_SIGNED_IN,
-    USER_SIGNIN_PROGRESS, USER_INFO_LOADED
+    USER_SIGNIN_PROGRESS, USER_INFO_LOADED,
+    UPDATE_SALLY
 } from '../actions/types';
 import {initialState} from '../State';
 
@@ -73,6 +74,10 @@ export const GainsightLiteReducer = (state = initialState, action) => {
     case LOAD_CTAS:
       newState = {...state};
       newState.cta = {...newState.cta, ...action.payload.cta}
+      return newState;
+    case UPDATE_SALLY:
+      newState = {...state};
+      newState.sally = {...newState.sally, ...action.payload}
       return newState;
     default:
       return state;
