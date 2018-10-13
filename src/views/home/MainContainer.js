@@ -33,7 +33,7 @@ export class MainContainer extends Component {
       return (
         <View style={styles.mainContainer}>
             <HomeToolbar navigation={this.props.navigation}/>
-            <View style={{flex:1}}>
+            <View style={{flex: 1}}>
                 <TabsStack navigation={this.props.navigation}/>
             </View>
         </View>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     mainContainer: {
       display:'flex',
       flexDirection:'column',
-      backgroundColor: '#fff',
+      backgroundColor: '#fff',  
       height:'100%'
     }
   });
