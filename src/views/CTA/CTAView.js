@@ -42,7 +42,11 @@ class CTAView extends React.Component{
                     avatar={
                         getLetterAvatar(`${this.props.item.OwnerId__gr.FirstName} ${this.props.item.OwnerId__gr.LastName}`)
                     }
-                    onPress={() => {this.props.showDetailView(this.props.item, "CTA")}}
+                    onPress={() => {
+                        this.props.navigation.navigate('CTADetails', {
+                            item:this.props.item
+                        });
+                    }}
                 />
         );
     }

@@ -1,10 +1,13 @@
 import React from "react";
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
-import { Avatar } from "react-native-elements";
-var moment = require('moment');
+import {StyleSheet, View, Text, ScrollView, Alert, ActivityIndicator} from 'react-native';
 import HTMLView from 'react-native-htmlview';
-import {getLetterAvatar} from '../../utilities/LetterAvatar';
+import {COLOR} from "react-native-material-ui";
+import { CTADetailViewToolbar } from "./CTADetailViewToolbar";
+import { Icon } from "react-native-elements";
+import { getLetterAvatar } from "../../utilities/LetterAvatar";
+import TasksList from "../activitytimeline/TaskList";
 
+const moment = require('moment');
 const ContextLabelMapper: any = {};
 ContextLabelMapper['Account'] = "C";
 ContextLabelMapper['Company'] = "C";
@@ -25,37 +28,80 @@ function htmlUnescape(replaceStr:string):string{
     }
 }
 
-export class CtaDetailView extends React.Component{
+export class CTADetailView extends React.Component{
+
+    constructor(props) {
+        super(props);
+        const { navigation } = this.props;
+        const item = navigation.getParam('item');
+        const itemId = navigation.getParam('itemId');
+        const shouldLoadDetails = navigation.getParam('shouldLoadDetails');
+        if(shouldLoadDetails && itemId){
+            this.state = {isLoading:true, itemId};
+        } else if (item){
+            this.state = {item};
+        } else{
+            this.state = {error:true};
+        }
+    }
+
+    _onMissingDetails(){
+        this.setState({item:null, isLoading:false, error:true});
+        Alert.alert(
+            'Error',
+            `Failed to get cta details`,
+            [{ text: 'OK', onPress: () => {
+                    this.props.navigation.pop();
+                }}],
+            { cancelable: false }
+        );
+    }
+
+    componentDidMount(){
+        const {isLoading, error, itemId} = this.state;
+
+        if(error){
+            this._onMissingDetails();
+        } else if(isLoading){
+            //##TODO
+        }
+    }
 
     render(){
-        let contextName = this.props.item.contexts[this.props.item.contexts.length-1].obj;
+        const { navigation } = this.props;
+        const {item, isLoading, error} = this.state;
+
+        if(error){
+            return null;
+        } else if(isLoading){
+            return <ActivityIndicator size="large" color={COLOR.blue800} />;
+        }
+
+        let subjectStyle = item.IsClosed ? {textDecorationLine: 'line-through', textDecorationStyle: 'solid'} : {};
+        let dueDateStyle = item.CreatedDate < Date.now() ? {color: COLOR.red600} : {};
+
         return (
-            <View style={styles.view}>
-                <View style={styles.header}>
-                    {
-                        getLetterAvatar(this.props.item.author.name)
-                    }
-                    <View>
-                        <View style={styles.titleView}>
-                            <Text style={styles.entity}>{ContextLabelMapper[contextName]}</Text>
-                            <Text style={styles.entityName}>{contextName}</Text>
-                        </View>
+            <View style={{flex:1}}>
+                <CTADetailViewToolbar navigation={navigation} item={item} />
+                <View style={styles.view}>
+                    <View style={styles.header}>
+                        {
+                            getLetterAvatar(`${item.OwnerId__gr.FirstName} ${item.OwnerId__gr.LastName}`)
+                        }
                         <View style={styles.subtitleView}>
                             <View style={styles.subtitleViewTop}>
-                                <Text style={styles.subject}>{this.props.item.note.subject}</Text>
+                                <Text style={styles.subject}>{item.Name}</Text>
                             </View>
                             <View style={styles.subtitleViewBottom}>
-                                <Text style={styles.author}>{this.props.item.author.name}</Text>
-                                <Text style={styles.date}>{moment(this.props.item.note.activityDate).format("DD/MM/YYYY h:mm a")}</Text>
+                                <Icon name='star' color={item.IsImportant ? COLOR.blue400 : COLOR.orange400} />
+                                <Icon name={item.PriorityId__gr.Name == "Medium" ? 'low-priority' : 'priority-high'} />
+                                <Text style={{...styles.date}}>{`${item.ClosedTaskCount} of ${item.TotalTaskCount}`}</Text>
+                                <Text style={{...styles.date, ...dueDateStyle}}>{moment(item.CreatedDate).format("DD/MM/YYYY h:mm a")}</Text>
                             </View>
                         </View>
                     </View>
-                </View>
-                <View style={styles.body}>
-                    <ScrollView>
-                        <HTMLView
-                            value={htmlUnescape(this.props.item.note.content)}
-                        />
+                    <ScrollView style={styles.body}>
+                        <TasksList ctaId={item.Gsid}></TasksList>
                     </ScrollView>
                 </View>
             </View>
@@ -65,18 +111,26 @@ export class CtaDetailView extends React.Component{
 
 const styles = StyleSheet.create({
     view:{
-        marginLeft: 10,
-        marginTop: 10,
-        marginRight: 10
+      backgroundColor:'#ffffff',
+      flex:1
     },
     header:{
+        paddingTop:10,
+        paddingBottom:10,
+        paddingLeft:10,
+        paddingRight:10,
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderBottomWidth: 0.5,
+        borderBottomColor: '#000000',
     },
     body:{
-        borderTopWidth: 0.5,
-        borderTopColor: '#97979733',
-        marginTop: 10
+        paddingTop:10,
+        paddingBottom:10,
+        paddingLeft:10,
+        paddingRight:10,
+        marginTop: 10,
+        fontSize:13
     },
     titleView:{
         flexDirection: 'row',
@@ -102,7 +156,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     subtitleViewBottom:{
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     subject:{
         color: '#374353',

@@ -49,7 +49,7 @@ class CTAList extends React.Component {
                 <View style={{flex: 1}}>
                         <FlatList
                             data={ctas}
-                            renderItem={({item})=>{return (<CTAView item={item}></CTAView>)}}
+                            renderItem={({item})=>{return (<CTAView navigation={this.props.navigation} item={item}></CTAView>)}}
                             keyExtractor={(item, index) => index+""}
                             refreshing={isRefreshing}
                             onRefresh={()=>{this.props.resetState(); this.loadCtas();}}

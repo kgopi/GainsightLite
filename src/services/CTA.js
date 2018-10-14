@@ -38,7 +38,7 @@ export function fetchTasks({ctaId, activityId}){
     if(activityId){
         url = url + `/task/byTimeline/${activityId}?ctaId=${ctaId}`;
     }else{
-        url = url + `/task/byTimeline/${activityId}?ctaId=${ctaId}`;
+        url = url + `/task/byCta/${ctaId}?randprm=${Date.now()}`;
     }
     return fetch(url, {
             method: 'GET',

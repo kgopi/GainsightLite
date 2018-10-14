@@ -7,11 +7,12 @@ import {
   TextInput,
   Platform 
 } from "react-native";
-import {List, ListItem, CheckBox} from 'react-native-elements';
+import {List, ListItem, CheckBox, Icon} from 'react-native-elements';
 import {getLetterAvatar} from '../../utilities/LetterAvatar';
 import {showDetailView, showTasks} from "./../../actions/timeline";
 import {fetchTasks, closeTask} from './../../services/CTA';
 var moment = require('moment');
+import {COLOR} from "react-native-material-ui";
 
 const ContextLabelMapper: any = {};
 ContextLabelMapper['Account'] = "C";
@@ -71,18 +72,34 @@ export default class TasksList extends React.Component{
     }
 
     render() {
-        return (
-            <List>
-                <Text style={{marginTop: 10}}>{"Tasks"}</Text>
-                <FlatList
-                    data={this.state.tasks}
-                    keyExtractor={(item, index) => index+""}
-                    renderItem={({ item, index }) =>
-                        <TaskView Gsid={item.Gsid} item={item}></TaskView>
-                    }
-                />
-            </List>
-        );
+        if(this.state.tasks.length == 0){
+            return (
+                <View style={{paddingTop: 40, flexDirection: 'column', alignItems: 'center'}}>
+                    <Icon
+                        reverse
+                        name='tasks'
+                        type='font-awesome'
+                        color={COLOR.grey400}
+                    />
+                    <Text>
+                        {"No Task's found.."}
+                    </Text>
+                </View>
+            );
+        }else{
+            return (
+                <List>
+                    <Text style={{marginTop: 10}}>{"Tasks"}</Text>
+                    <FlatList
+                        data={this.state.tasks}
+                        keyExtractor={(item, index) => index+""}
+                        renderItem={({ item, index }) =>
+                            <TaskView Gsid={item.Gsid} item={item}></TaskView>
+                        }
+                    />
+                </List>
+            );
+        }
     }
 
 }
