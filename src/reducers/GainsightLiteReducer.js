@@ -13,7 +13,7 @@ import {
     LOAD_CTAS,
     USER_SIGNED_IN,
     USER_SIGNIN_PROGRESS, USER_INFO_LOADED,
-    UPDATE_SALLY
+    UPDATE_SALLY, USER_SIGNOUT_PROGRESS, USER_SIGNED_OUT
 } from '../actions/types';
 import {initialState} from '../State';
 
@@ -27,6 +27,14 @@ export const GainsightLiteReducer = (state = initialState, action) => {
     case USER_SIGNIN_PROGRESS:
       newState = {...state};
       newState.signin = {...newState.signin, ...action.payload};
+      return newState;
+    case USER_SIGNOUT_PROGRESS:
+        newState = {...state};
+        newState.signout = {...newState.signout, ...action.payload};
+        return newState;
+    case USER_SIGNED_OUT:
+      newState = {...state};
+      newState.userToken = null;
       return newState;
     case USER_INFO_LOADED:
       newState = {...state};

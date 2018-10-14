@@ -6,6 +6,9 @@ export const initialState = {
   signin: {
       showLoader: true
   },
+  signout: {
+    showLoader: false
+  },
   timeline: {
       selectedActivity: null,
       isRefreshing: false,

@@ -4,7 +4,8 @@ import {
     ON_SEARCH,
     USER_SIGNED_IN,
     USER_SIGNIN_PROGRESS,
-    USER_INFO_LOADED
+    USER_INFO_LOADED,
+    USER_SIGNOUT_PROGRESS, USER_SIGNED_OUT
 } from './types';
 
 export const changeAppTitle = title => {
@@ -43,6 +44,21 @@ export const onSignedInprogress = showLoader =>{
         payload: {
             showLoader
         }
+    }
+};
+
+export const onSignOutprogress = showLoader =>{
+    return {
+        type: USER_SIGNOUT_PROGRESS,
+        payload: {
+            showLoader
+        }
+    }
+};
+
+export const onSignedOut = showLoader =>{
+    return {
+        type: USER_SIGNED_OUT
     }
 };
 

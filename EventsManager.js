@@ -2,7 +2,7 @@ import {createNotification} from "./src/views/notifications/NotificationControll
 import {
     getAuthToken
 } from './src/services/Timeline';
-const SocketClient = require("socketcluster-client").create;
+const SocketClient = require("socketcluster-client");
 import store from './src/Store';
 
 class EventsManager{
@@ -18,6 +18,15 @@ class EventsManager{
         }
         notifyMesage(title, message, data);
     }*/
+
+    _currentSocket = null;
+
+    disconnectSocketConnection(){
+        if(this._currentSocket){
+            SocketClient.destroy(this._currentSocket);
+            this._currentSocket = null;
+        }
+    }
 
     initWebSocketConnection() {
 
@@ -45,7 +54,7 @@ class EventsManager{
 
             options.query.id = res.token;
 
-            const socket = SocketClient(options); // Initiate the connection to the server
+            const socket = this._currentSocket = SocketClient.create(options); // Initiate the connection to the server
             socket.on('connect', () => {
                 console.log('WebSocket connection is successful ...');
 

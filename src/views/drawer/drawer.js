@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     StatusBar,
-    View,
+    View, Alert,
 } from 'react-native';
 import {Toolbar, Drawer, Avatar} from 'react-native-material-ui';
 import connect from "react-redux/lib/connect/connect";
+import EventsManager from "../../../EventsManager";
+import {doLogout} from "../../services/LogoutService";
+import {onSignedOut, onSignOutprogress} from "../../actions/app";
+import Spinner from "react-native-loading-spinner-overlay";
 
 class DrawerMenu extends Component {
     constructor(props, context) {
@@ -19,6 +23,35 @@ class DrawerMenu extends Component {
         this.setState({ active: 'info' });
     }
 
+    _doSignout(){
+        this.props.toggleLoader(true);
+        doLogout().then(()=>{
+            this.props.toggleLoader(false);
+            this.props.handleSignedOut();
+            this.props.navigation.navigate('Auth');
+        }).catch(error => {
+            console.log(error);
+            this.props.toggleLoader(false);
+            Alert.alert(
+                'Failed to Signout',
+                `Failed to Signout from Gainsight. Please try again. ${(error && error.error_description)||''}`,
+                [{ text: 'RETRY', onPress: () => {
+                        this._doSignout();
+                    }}],
+                { cancelable: false }
+            );
+        });
+    }
+
+    _handleLogout(){
+        this.props.navigation.closeDrawer();
+        try{
+            EventsManager.disconnectSocketConnection();
+        }catch (e) {
+        }
+        this._doSignout();
+    }
+
     render() {
         let {user} = this.props;
         return (
@@ -27,7 +60,7 @@ class DrawerMenu extends Component {
                 <Toolbar
                     leftElement="arrow-back"
                     onLeftElementPress={() => this.props.navigation.closeDrawer()}
-                    centerElement=""
+                    centerElement="Welcome"
                 />
                 <View style={styles.container}>
                     <Drawer>
@@ -54,10 +87,7 @@ class DrawerMenu extends Component {
                                 {
                                     icon: 'exit-to-app', value: 'Logout',
                                     active: this.state.active == 'logout',
-                                    onPress: () => {
-                                        //this.setState({active: 'logout'});
-                                        //this.props.navigation.navigate('logout');
-                                    },
+                                    onPress: () => this._handleLogout(),
                                 }]
                             }/>
 
@@ -115,6 +145,7 @@ class DrawerMenu extends Component {
                         />*/}
                     </Drawer>
                 </View>
+                <Spinner visible={this.props.showLoader} textContent={"Signing out..."} textStyle={{color: '#FFF'}} />
             </View>
         );
     }
@@ -122,11 +153,24 @@ class DrawerMenu extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        user: state.app.GS.user
+        user: state.app.GS.user,
+        showLoader: state.app.signout.showLoader
     }
 };
 
-export default connect(mapStateToProps)(DrawerMenu);
+const mapDispatchersToProps = dispatch => {
+    return {
+        handleSignedOut: ()=> {
+            dispatch(onSignedOut());
+        },
+        toggleLoader:(showLoader)=>{
+            dispatch(onSignOutprogress(showLoader));
+        }
+    }
+};
+
+
+export default connect(mapStateToProps, mapDispatchersToProps)(DrawerMenu);
 
 const styles = StyleSheet.create({
     container: {
