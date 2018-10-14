@@ -3,13 +3,15 @@ import {
     Alert,
     View,
     StyleSheet,
-    StatusBar} from 'react-native';
+    StatusBar, Image
+} from 'react-native';
 import {connect} from 'react-redux';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {onSignedIn, onSignedInprogress, onUserInfoLoaded} from "../../actions/app";
 import {auth0} from "./webauth";
 import {fetchBootstrap} from "../../services/GSBootstrap";
 import EventsManager from '../../../EventsManager';
+import {Button} from "react-native-material-ui";
 
 const styles = StyleSheet.create({
     container: {
@@ -17,6 +19,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF'
+    },
+    buttoncontainer:{
+        paddingTop:30,
+        paddingBottom:30,
+        width:200
+    },
+    buttontext:{
+        fontSize:16
     }
 });
 
@@ -30,7 +40,7 @@ class SignInScreen extends Component {
     _bootstrapAsync = () => {
         const userToken = this.props.userToken;
         if(!userToken){
-            this._authenticate();
+            //this._authenticate();
         } else {
             this._getUserDetails();
         }
@@ -87,10 +97,23 @@ class SignInScreen extends Component {
 
     // Render any loading content that you like here
     render() {
+        let loginButton = null;
+        if(!this.props.userToken){
+            loginButton = (<View>
+                <View style={{textAlign:"center", marginBottom:40,justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={require('../../logo_small.png')}/>
+                </View>
+                <Button raised primary text="Login" onPress={()=>this._authenticate()}  style={{
+                    container:styles.buttoncontainer,
+                    text:styles.buttontext
+                }}/>
+            </View>);
+        }
         return (
             <View style={styles.container}>
                 <Spinner visible={this.props.showLoader} textContent={"Loading..."} textStyle={{color: '#FFF'}} />
                 <StatusBar barStyle="default" />
+                {loginButton}
             </View>
         );
     }

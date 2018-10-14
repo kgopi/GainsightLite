@@ -4,7 +4,7 @@ export const initialState = {
   selectedTab: 0,
   searchText: "",
   signin: {
-      showLoader: true
+      showLoader: false
   },
   signout: {
     showLoader: false
