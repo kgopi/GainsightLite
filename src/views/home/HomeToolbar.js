@@ -16,12 +16,7 @@ class HomeToolbar extends Component{
                 autoFocus: true,
                 placeholder: 'Search',
             }}
-            rightElement={{
-                menu: {
-                    icon: "account-circle",
-                    labels: [this.props.userName, 'Logout']
-                }
-            }}
+            rightElement="notifications"
             onRightElementPress={ (label) => { console.log(label) }}
         />
     }

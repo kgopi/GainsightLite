@@ -15,6 +15,18 @@ function generateNotification(notificationObject) {
     }*/
 }
 
+function getCTANotifications(websocketMessge) {
+    switch (websocketMessge.command) {
+        case 'CTA_CREATE': {
+            let {data, userName} = websocketMessge;
+            let title = `New CTA Created`;
+            let message = `CTA '${data.Name}' created by '${userName}'`;
+            let extraDate = JSON.stringify(websocketMessge);
+            return {title, message, data:extraDate};
+        }
+    }
+}
+
 function getANTNotification(websocketMessge) {
     switch (websocketMessge.command){
         case 'ACTIVITY_INSERT':{
@@ -63,6 +75,9 @@ export function createNotification(websocketMessge) {
         case 'JOURNEY_PROGRAM':
             notificationObject = getJONotification(websocketMessge);
             break;
+        case 'CTA':
+            notificationObject = getCTANotifications(websocketMessge);
+            break;
     }
 
     if(notificationObject){
@@ -88,6 +103,16 @@ function handleNotificationIntegraction({data}) {
                     break;
             }
 
+        }
+        case "CTA":{
+            switch (data.command){
+                case 'CTA_CREATE':
+                    globalNavigator && globalNavigator.navigate('CTADetails', {
+                        itemId: data.data.Id,
+                        shouldLoadDetails:true
+                    });
+                    break;
+            }
         }
     }
 }
