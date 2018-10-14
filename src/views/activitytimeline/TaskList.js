@@ -7,12 +7,13 @@ import {
   TextInput,
   Platform 
 } from "react-native";
-import {List, ListItem, CheckBox, Icon} from 'react-native-elements';
+import {List, ListItem, CheckBox, Icon, FormLabel} from 'react-native-elements';
 import {getLetterAvatar} from '../../utilities/LetterAvatar';
 import {showDetailView, showTasks} from "./../../actions/timeline";
 import {fetchTasks, closeTask} from './../../services/CTA';
 var moment = require('moment');
 import {COLOR} from "react-native-material-ui";
+import Snackbar from 'react-native-snackbar';
 
 const ContextLabelMapper: any = {};
 ContextLabelMapper['Account'] = "C";
@@ -31,17 +32,32 @@ class TaskView extends React.Component{
 
     saveTaskStatus(){
         closeTask(this.props.item.Gsid, !this.state.IsClosed).then((res)=>{
-            this.setState({IsClosed: res.result ? !this.state.IsClosed : this.state.IsClosed});
+            debugger;
+            if(res.result){
+                res = res.data.closeStatus || res.data;
+                Snackbar.show({
+                    title: 'Task successfully updated',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+                this.setState({IsClosed: res.openStatusType});
+            }else{
+                Snackbar.show({
+                    title: 'Failed to update the task',
+                    duration: Snackbar.LENGTH_SHORT,
+                });
+            }
         });
     }
 
     render(){
+        let textStyle = this.state.IsClosed ? {textDecorationLine: 'line-through', fontStyle:'italic'} : {};
         return (
             <View style={styles.listItem}>
                 <View style={styles.left}>
                     <CheckBox
                         title={this.props.item.Name}
                         checked={this.state.IsClosed}
+                        textStyle={textStyle}
                         style={{backgroundColor: '#eaeaea'}}
                         onPress={() => this.saveTaskStatus()}
                     />
@@ -89,7 +105,7 @@ export default class TasksList extends React.Component{
         }else{
             return (
                 <List>
-                    <Text style={{marginTop: 10}}>{"Tasks"}</Text>
+                    <FormLabel>{'Tasks'}</FormLabel>
                     <FlatList
                         data={this.state.tasks}
                         keyExtractor={(item, index) => index+""}

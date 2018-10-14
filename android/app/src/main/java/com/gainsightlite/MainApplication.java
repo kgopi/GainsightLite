@@ -3,6 +3,7 @@ package com.gainsightlite;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.azendoo.reactnativesnackbar.SnackbarPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import me.jhen.devsettings.DevSettingsPackage;
 import com.auth0.react.A0Auth0Package;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SnackbarPackage(),
             new ReactNativePushNotificationPackage(),
             new DevSettingsPackage(),
             new A0Auth0Package(),

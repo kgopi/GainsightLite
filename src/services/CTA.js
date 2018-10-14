@@ -1,5 +1,16 @@
 import {CTA_URL, getHeaders} from './ServiceController';
 
+export function getCTADetails({ctaId, ctaTypeId, entity}){
+    return fetch(CTA_URL + `/cta/fetch/details/${ctaId}?ctaTypeId=${ctaTypeId}&et=${entity}&etId=&layouts=false&associatedRecords=true&randprm=${Date.now()}`, {
+            method: 'GET',
+            headers: getHeaders()
+        })
+        .then(res => res.json())
+        .catch(err => {
+            console.error(err);
+        });
+}
+
 export function fetchCTAs(){
     return fetch(CTA_URL + `/cta/fetch/view`, {
             method: 'POST',

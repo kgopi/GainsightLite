@@ -3,9 +3,10 @@ import {StyleSheet, View, Text, ScrollView, Alert, ActivityIndicator} from 'reac
 import HTMLView from 'react-native-htmlview';
 import {COLOR} from "react-native-material-ui";
 import { CTADetailViewToolbar } from "./CTADetailViewToolbar";
-import { Icon } from "react-native-elements";
+import { Icon, FormLabel, FormInput } from "react-native-elements";
 import { getLetterAvatar } from "../../utilities/LetterAvatar";
 import TasksList from "../activitytimeline/TaskList";
+import { getCTADetails } from "../../services/CTA";
 
 const moment = require('moment');
 const ContextLabelMapper: any = {};
@@ -25,6 +26,66 @@ function htmlUnescape(replaceStr:string):string{
     }
     else{
         return '';
+    }
+}
+
+export class CTABody extends React.Component{
+
+
+    constructor(props){
+        super(props);
+        this.state= {
+            isLoading: true,
+            ctaId: this.props.cta.Gsid,
+            ctaTypeId: this.props.cta.TypeId,
+            entity: this.props.cta.EntityType,
+            ctaDetails: null
+        }
+    }
+
+    componentDidMount(){
+        getCTADetails({ctaId: this.state.ctaId, ctaTypeId: this.state.ctaTypeId, entity: this.state.entity}).then((res)=>{
+            debugger;
+            if(res.result){
+                this.setState({isLoading: false, ctaDetails: res.data.cta});
+            }else{
+                this.setState({isLoading: false, ctaDetails: null});
+            }
+        });
+    }
+
+    render(){
+        if(this.state.isLoading){
+            return <ActivityIndicator size="large" color={COLOR.blue800} />
+        }else{
+            if(this.state.ctaDetails == null){
+                return null;
+            }
+            return (
+                <View style={{top: -10, flexDirection: 'column', justifyContent: 'flex-start'}}>
+                    <View>
+                        <FormLabel>{'Reason'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.ReasonId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Priority'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.PriorityId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Status'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.StatusId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Type'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.TypeId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Created Date'}</FormLabel>
+                        <FormInput editable={false} value={moment(this.state.ctaDetails.CreatedDate).format("DD/MM/YYYY h:mm a")}/>
+                    </View>
+                </View>
+            );
+        }
     }
 }
 
@@ -101,6 +162,7 @@ export class CTADetailView extends React.Component{
                         </View>
                     </View>
                     <ScrollView style={styles.body}>
+                        <CTABody cta={item}></CTABody>
                         <TasksList ctaId={item.Gsid}></TasksList>
                     </ScrollView>
                 </View>
