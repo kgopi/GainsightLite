@@ -44,7 +44,11 @@ class CTAView extends React.Component{
                     }
                     onPress={() => {
                         this.props.navigation.navigate('CTADetails', {
-                            item:this.props.item
+                            itemId: this.props.item.Gsid,
+                            ctaTypeId: this.props.item.TypeId,
+                            entity: this.props.item.EntityType,
+                            shouldLoadDetails:true,
+                            abstractItem: this.props.item
                         });
                     }}
                 />

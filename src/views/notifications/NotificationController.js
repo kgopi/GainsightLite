@@ -109,7 +109,10 @@ function handleNotificationIntegraction({data}) {
                 case 'CTA_CREATE':
                     globalNavigator && globalNavigator.navigate('CTADetails', {
                         itemId: data.data.Id,
-                        shouldLoadDetails:true
+                        ctaTypeId: data.data.TypeId,
+                        entity: data.data.EntityType,
+                        shouldLoadDetails:true,
+                        abstractItem: {...data.data, ...{OwnerId__gr: {FirstName: data.data.userName, LastName: ''}}}
                     });
                     break;
             }

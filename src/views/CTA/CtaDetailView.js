@@ -29,66 +29,6 @@ function htmlUnescape(replaceStr:string):string{
     }
 }
 
-export class CTABody extends React.Component{
-
-
-    constructor(props){
-        super(props);
-        this.state= {
-            isLoading: true,
-            ctaId: this.props.cta.Gsid,
-            ctaTypeId: this.props.cta.TypeId,
-            entity: this.props.cta.EntityType,
-            ctaDetails: null
-        }
-    }
-
-    componentDidMount(){
-        getCTADetails({ctaId: this.state.ctaId, ctaTypeId: this.state.ctaTypeId, entity: this.state.entity}).then((res)=>{
-            debugger;
-            if(res.result){
-                this.setState({isLoading: false, ctaDetails: res.data.cta});
-            }else{
-                this.setState({isLoading: false, ctaDetails: null});
-            }
-        });
-    }
-
-    render(){
-        if(this.state.isLoading){
-            return <ActivityIndicator size="large" color={COLOR.blue800} />
-        }else{
-            if(this.state.ctaDetails == null){
-                return null;
-            }
-            return (
-                <View style={{top: -10, flexDirection: 'column', justifyContent: 'flex-start'}}>
-                    <View>
-                        <FormLabel>{'Reason'}</FormLabel>
-                        <FormInput editable={false} value={this.state.ctaDetails.ReasonId__gr.Name}/>
-                    </View>
-                    <View>
-                        <FormLabel>{'Priority'}</FormLabel>
-                        <FormInput editable={false} value={this.state.ctaDetails.PriorityId__gr.Name}/>
-                    </View>
-                    <View>
-                        <FormLabel>{'Status'}</FormLabel>
-                        <FormInput editable={false} value={this.state.ctaDetails.StatusId__gr.Name}/>
-                    </View>
-                    <View>
-                        <FormLabel>{'Type'}</FormLabel>
-                        <FormInput editable={false} value={this.state.ctaDetails.TypeId__gr.Name}/>
-                    </View>
-                    <View>
-                        <FormLabel>{'Created Date'}</FormLabel>
-                        <FormInput editable={false} value={moment(this.state.ctaDetails.CreatedDate).format("DD/MM/YYYY h:mm a")}/>
-                    </View>
-                </View>
-            );
-        }
-    }
-}
-
 export class CTADetailView extends React.Component{
 
     constructor(props) {
@@ -96,9 +36,12 @@ export class CTADetailView extends React.Component{
         const { navigation } = this.props;
         const item = navigation.getParam('item');
         const itemId = navigation.getParam('itemId');
+        const ctaTypeId = navigation.getParam('ctaTypeId');
+        const entity = navigation.getParam('entity');
+        const abstractItem = navigation.getParam('abstractItem');
         const shouldLoadDetails = navigation.getParam('shouldLoadDetails');
         if(shouldLoadDetails && itemId){
-            this.state = {isLoading:true, itemId};
+            this.state = {isLoading:true, itemId, ctaTypeId, entity, abstractItem};
         } else if (item){
             this.state = {item};
         } else{
@@ -119,12 +62,20 @@ export class CTADetailView extends React.Component{
     }
 
     componentDidMount(){
-        const {isLoading, error, itemId} = this.state;
+        const {isLoading, error, itemId, ctaTypeId, entity, abstractItem} = this.state;
 
         if(error){
             this._onMissingDetails();
         } else if(isLoading){
-            //##TODO
+            getCTADetails({ctaId:itemId, ctaTypeId, entity}).then((res)=>{
+                if(res.result){
+                    this.setState({isLoading: false, item: {...abstractItem, ...res.data.cta}});
+                }else{
+                    this._onMissingDetails();
+                }
+            }).catch(()=>{
+                this._onMissingDetails();
+            })
         }
     }
 
@@ -135,7 +86,12 @@ export class CTADetailView extends React.Component{
         if(error){
             return null;
         } else if(isLoading){
-            return <ActivityIndicator size="large" color={COLOR.blue800} />;
+            return (
+                <View>
+                    <CTADetailViewToolbar navigation={navigation} item={{'CompanyId__gr': {'Name':'CTA Deatils'}}} />
+                    <ActivityIndicator size="large" color={COLOR.blue800} />
+                </View>
+            );
         }
 
         let subjectStyle = item.IsClosed ? {textDecorationLine: 'line-through', textDecorationStyle: 'solid'} : {};
@@ -239,3 +195,44 @@ const styles = StyleSheet.create({
         fontSize: 12
     }
 });
+
+export class CTABody extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.state= {
+            ctaDetails: this.props.cta
+        }
+    }
+
+    render(){
+        if(this.state.isLoading){
+            return <ActivityIndicator size="large" color={COLOR.blue800} />
+        }else{
+            return (
+                <View style={{top: -10, flexDirection: 'column', justifyContent: 'flex-start'}}>
+                    <View>
+                        <FormLabel>{'Reason'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.ReasonId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Priority'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.PriorityId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Status'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.StatusId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Type'}</FormLabel>
+                        <FormInput editable={false} value={this.state.ctaDetails.TypeId__gr.Name}/>
+                    </View>
+                    <View>
+                        <FormLabel>{'Created Date'}</FormLabel>
+                        <FormInput editable={false} value={moment(this.state.ctaDetails.CreatedDate).format("DD/MM/YYYY h:mm a")}/>
+                    </View>
+                </View>
+            );
+        }
+    }
+}

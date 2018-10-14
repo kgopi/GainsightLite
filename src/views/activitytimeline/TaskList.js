@@ -39,7 +39,7 @@ class TaskView extends React.Component{
                     title: 'Task successfully updated',
                     duration: Snackbar.LENGTH_SHORT,
                 });
-                this.setState({IsClosed: res.openStatusType});
+                this.setState({IsClosed: !res.openStatusType});
             }else{
                 Snackbar.show({
                     title: 'Failed to update the task',
@@ -90,7 +90,7 @@ export default class TasksList extends React.Component{
     render() {
         if(this.state.tasks.length == 0){
             return (
-                <View style={{paddingTop: 40, flexDirection: 'column', alignItems: 'center'}}>
+                <View style={{paddingTop: 40, marginBottom: 20, flexDirection: 'column', alignItems: 'center'}}>
                     <Icon
                         reverse
                         name='tasks'
