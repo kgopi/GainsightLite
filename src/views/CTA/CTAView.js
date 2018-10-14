@@ -1,9 +1,10 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import {ListItem} from 'react-native-elements';
+import {ListItem, Icon} from 'react-native-elements';
 import {getLetterAvatar} from '../../utilities/LetterAvatar';
 import {showDetailView} from "../../actions/cta";
 import {connect} from 'react-redux';
+import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
 var moment = require('moment');
 
 const ContextLabelMapper: any = {};
@@ -15,6 +16,8 @@ class CTAView extends React.Component{
 
     render() {
         let contextName = this.props.item.EntityType + "";
+        let subjectStyle = this.props.item.IsClosed ? {textDecorationLine: 'line-through', textDecorationStyle: 'solid'} : {};
+        let dueDateStyle = this.props.item.CreatedDate < Date.now() ? {color: COLOR.red600} : {};
         return (<ListItem
                     roundAvatar
                     title={
@@ -26,16 +29,18 @@ class CTAView extends React.Component{
                     subtitle={
                         <View style={styles.subtitleView}>
                             <View style={styles.subtitleViewTop}>
-                                <Text style={styles.subject}>{this.props.item.Name}</Text>
+                                <Text style={{...styles.subject, ...subjectStyle}}>{this.props.item.Name}</Text>
                             </View>
                             <View style={styles.subtitleViewBottom}>
-                                <Text style={styles.author}>{this.props.item.OwnerId__gr.FirstName}</Text>
-                                <Text style={styles.date}>{moment(this.props.item.CreatedDate).format("DD/MM/YYYY h:mm a")}</Text>
+                                <Icon name='star' color={this.props.item.IsImportant ? COLOR.blue400 : COLOR.orange400} />
+                                <Icon name={this.props.item.PriorityId__gr.Name == "Medium" ? 'low-priority' : 'priority-high'} />
+                                <Text style={{...styles.dueDate}}>{`${this.props.item.ClosedTaskCount} of ${this.props.item.TotalTaskCount}`}</Text>
+                                <Text style={{...styles.dueDate, ...dueDateStyle}}>{moment(this.props.item.CreatedDate).format("DD/MM/YYYY h:mm a")}</Text>
                             </View>
                         </View>
                     }
                     avatar={
-                        getLetterAvatar(this.props.item.OwnerId__gr.FirstName)
+                        getLetterAvatar(`${this.props.item.OwnerId__gr.FirstName} ${this.props.item.OwnerId__gr.LastName}`)
                     }
                     onPress={() => {this.props.showDetailView(this.props.item, "CTA")}}
                 />
@@ -69,7 +74,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     subtitleViewBottom:{
-        flexDirection: 'row'
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     subject:{
         color: '#374353',
@@ -79,6 +85,14 @@ const styles = StyleSheet.create({
         color: '#374353',
         fontSize: 12,
         marginRight: 4
+    },
+    dueDate:{
+        marginLeft: 4,
+        borderLeftWidth: 1,
+        borderLeftColor: "#dedbdb",
+        paddingLeft: 10,
+        color: '#374353',
+        fontSize: 12
     },
     date:{
         marginLeft: 4,
